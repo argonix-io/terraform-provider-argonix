@@ -17,19 +17,19 @@ import (
 )
 
 var (
-	_ resource.Resource              = &alertRuleResource{}
-	_ resource.ResourceWithConfigure = &alertRuleResource{}
+	_ resource.Resource              = &notificationRuleResource{}
+	_ resource.ResourceWithConfigure = &notificationRuleResource{}
 )
 
-func NewAlertRuleResource() resource.Resource {
-	return &alertRuleResource{}
+func NewNotificationRuleResource() resource.Resource {
+	return &notificationRuleResource{}
 }
 
-type alertRuleResource struct {
+type notificationRuleResource struct {
 	client *client.Client
 }
 
-type alertRuleResourceModel struct {
+type notificationRuleResourceModel struct {
 	ID                  types.String `tfsdk:"id"`
 	Name                types.String `tfsdk:"name"`
 	IsActive            types.Bool   `tfsdk:"is_active"`
@@ -46,7 +46,7 @@ type alertRuleResourceModel struct {
 	DateModified        types.String `tfsdk:"date_modified"`
 }
 
-type alertRuleAPIModel struct {
+type notificationRuleAPIModel struct {
 	ID                  string      `json:"id"`
 	Name                string      `json:"name"`
 	IsActive            bool        `json:"is_active"`
@@ -63,13 +63,13 @@ type alertRuleAPIModel struct {
 	DateModified        string      `json:"date_modified"`
 }
 
-func alertRuleAPIToState(api alertRuleAPIModel) alertRuleResourceModel {
+func notificationRuleAPIToState(api notificationRuleAPIModel) notificationRuleResourceModel {
 	monitorTagsJSON, _ := json.Marshal(api.MonitorTags)
 	monitorsJSON, _ := json.Marshal(api.Monitors)
 	syntheticTestsJSON, _ := json.Marshal(api.SyntheticTests)
 	channelsJSON, _ := json.Marshal(api.Channels)
 
-	return alertRuleResourceModel{
+	return notificationRuleResourceModel{
 		ID:                  types.StringValue(api.ID),
 		Name:                types.StringValue(api.Name),
 		IsActive:            types.BoolValue(api.IsActive),
@@ -87,13 +87,13 @@ func alertRuleAPIToState(api alertRuleAPIModel) alertRuleResourceModel {
 	}
 }
 
-func (r *alertRuleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_alert_rule"
+func (r *notificationRuleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_notification_rule"
 }
 
-func (r *alertRuleResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *notificationRuleResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages an Argonix alert rule.",
+		Description: "Manages an Argonix notification rule.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -111,7 +111,7 @@ func (r *alertRuleResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 			"trigger_condition": schema.StringAttribute{
 				Required:    true,
-				Description: "Trigger condition: status_change, goes_down, goes_up, degraded, ssl_expiry, test_failing, test_passing.",
+				Description: "Trigger condition: status_change, goes_down, goes_up, degraded, ssl_expiry, test_failing, test_passing, test_run_complete.",
 			},
 			"consecutive_failures": schema.Int64Attribute{
 				Optional: true,
@@ -155,7 +155,7 @@ func (r *alertRuleResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 			"channels": schema.StringAttribute{
 				Required:    true,
-				Description: "JSON-encoded list of alert channel UUIDs.",
+				Description: "JSON-encoded list of notification channel UUIDs.",
 			},
 			"date_created":  schema.StringAttribute{Computed: true},
 			"date_modified": schema.StringAttribute{Computed: true},
@@ -163,7 +163,7 @@ func (r *alertRuleResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 	}
 }
 
-func (r *alertRuleResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *notificationRuleResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -175,76 +175,76 @@ func (r *alertRuleResource) Configure(_ context.Context, req resource.ConfigureR
 	r.client = c
 }
 
-func (r *alertRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan alertRuleResourceModel
+func (r *notificationRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan notificationRuleResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	payload := alertRuleStateToPayload(plan)
-	var apiResp alertRuleAPIModel
-	err := r.client.Create(ctx, "/alert-rules/", payload, &apiResp)
+	payload := notificationRuleStateToPayload(plan)
+	var apiResp notificationRuleAPIModel
+	err := r.client.Create(ctx, "/notification-rules/", payload, &apiResp)
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating alert rule", err.Error())
+		resp.Diagnostics.AddError("Error creating notification rule", err.Error())
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, alertRuleAPIToState(apiResp))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, notificationRuleAPIToState(apiResp))...)
 }
 
-func (r *alertRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state alertRuleResourceModel
+func (r *notificationRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state notificationRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var apiResp alertRuleAPIModel
-	err := r.client.Read(ctx, fmt.Sprintf("/alert-rules/%s/", state.ID.ValueString()), &apiResp)
+	var apiResp notificationRuleAPIModel
+	err := r.client.Read(ctx, fmt.Sprintf("/notification-rules/%s/", state.ID.ValueString()), &apiResp)
 	if err != nil {
 		if client.IsNotFound(err) {
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading alert rule", err.Error())
+		resp.Diagnostics.AddError("Error reading notification rule", err.Error())
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, alertRuleAPIToState(apiResp))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, notificationRuleAPIToState(apiResp))...)
 }
 
-func (r *alertRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan alertRuleResourceModel
+func (r *notificationRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan notificationRuleResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	var state alertRuleResourceModel
+	var state notificationRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	payload := alertRuleStateToPayload(plan)
-	var apiResp alertRuleAPIModel
-	err := r.client.Update(ctx, fmt.Sprintf("/alert-rules/%s/", state.ID.ValueString()), payload, &apiResp)
+	payload := notificationRuleStateToPayload(plan)
+	var apiResp notificationRuleAPIModel
+	err := r.client.Update(ctx, fmt.Sprintf("/notification-rules/%s/", state.ID.ValueString()), payload, &apiResp)
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating alert rule", err.Error())
+		resp.Diagnostics.AddError("Error updating notification rule", err.Error())
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, alertRuleAPIToState(apiResp))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, notificationRuleAPIToState(apiResp))...)
 }
 
-func (r *alertRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state alertRuleResourceModel
+func (r *notificationRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state notificationRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	err := r.client.Delete(ctx, fmt.Sprintf("/alert-rules/%s/", state.ID.ValueString()))
+	err := r.client.Delete(ctx, fmt.Sprintf("/notification-rules/%s/", state.ID.ValueString()))
 	if err != nil {
-		resp.Diagnostics.AddError("Error deleting alert rule", err.Error())
+		resp.Diagnostics.AddError("Error deleting notification rule", err.Error())
 	}
 }
 
-func alertRuleStateToPayload(plan alertRuleResourceModel) map[string]interface{} {
+func notificationRuleStateToPayload(plan notificationRuleResourceModel) map[string]interface{} {
 	payload := map[string]interface{}{
 		"name":                 plan.Name.ValueString(),
 		"is_active":            plan.IsActive.ValueBool(),
@@ -266,7 +266,8 @@ func alertRuleStateToPayload(plan alertRuleResourceModel) map[string]interface{}
 func unmarshalJSONField(jsonStr, key string, payload map[string]interface{}) {
 	if jsonStr != "" {
 		var v interface{}
-		json.Unmarshal([]byte(jsonStr), &v)
-		payload[key] = v
+		if err := json.Unmarshal([]byte(jsonStr), &v); err == nil {
+			payload[key] = v
+		}
 	}
 }

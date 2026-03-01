@@ -6,7 +6,7 @@ description: |-
 
 # argonix_alert_channel (Resource)
 
-Manages an Argonix alert channel. Alert channels are notification destinations used by alert rules (e.g., Slack, email, PagerDuty).
+Manages an Argonix alert channel. Alert channels are notification destinations used by notification rules (e.g., Slack, email, PagerDuty).
 
 ## Example Usage
 

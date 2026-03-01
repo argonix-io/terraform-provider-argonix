@@ -11,27 +11,27 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &alertRuleDataSource{}
-	_ datasource.DataSourceWithConfigure = &alertRuleDataSource{}
-	_ datasource.DataSource              = &alertRulesDataSource{}
-	_ datasource.DataSourceWithConfigure = &alertRulesDataSource{}
+	_ datasource.DataSource              = &notificationRuleDataSource{}
+	_ datasource.DataSourceWithConfigure = &notificationRuleDataSource{}
+	_ datasource.DataSource              = &notificationRulesDataSource{}
+	_ datasource.DataSourceWithConfigure = &notificationRulesDataSource{}
 )
 
-func NewAlertRuleDataSource() datasource.DataSource {
-	return &alertRuleDataSource{}
+func NewNotificationRuleDataSource() datasource.DataSource {
+	return &notificationRuleDataSource{}
 }
 
-type alertRuleDataSource struct {
+type notificationRuleDataSource struct {
 	client *client.Client
 }
 
-func (d *alertRuleDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_alert_rule"
+func (d *notificationRuleDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_notification_rule"
 }
 
-func (d *alertRuleDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *notificationRuleDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Fetches a single Argonix alert rule by ID.",
+		Description: "Fetches a single Argonix notification rule by ID.",
 		Attributes: map[string]schema.Attribute{
 			"id":                   schema.StringAttribute{Required: true},
 			"name":                 schema.StringAttribute{Computed: true},
@@ -51,7 +51,7 @@ func (d *alertRuleDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 	}
 }
 
-func (d *alertRuleDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *notificationRuleDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -63,7 +63,7 @@ func (d *alertRuleDataSource) Configure(_ context.Context, req datasource.Config
 	d.client = c
 }
 
-func (d *alertRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *notificationRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config struct {
 		ID types.String `tfsdk:"id"`
 	}
@@ -72,38 +72,38 @@ func (d *alertRuleDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	var apiResp alertRuleAPIModel
-	err := d.client.Read(ctx, fmt.Sprintf("/alert-rules/%s/", config.ID.ValueString()), &apiResp)
+	var apiResp notificationRuleAPIModel
+	err := d.client.Read(ctx, fmt.Sprintf("/notification-rules/%s/", config.ID.ValueString()), &apiResp)
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading alert rule", err.Error())
+		resp.Diagnostics.AddError("Error reading notification rule", err.Error())
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, alertRuleAPIToState(apiResp))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, notificationRuleAPIToState(apiResp))...)
 }
 
-// --- List alert rules data source ---
+// --- List notification rules data source ---
 
-func NewAlertRulesDataSource() datasource.DataSource {
-	return &alertRulesDataSource{}
+func NewNotificationRulesDataSource() datasource.DataSource {
+	return &notificationRulesDataSource{}
 }
 
-type alertRulesDataSource struct {
+type notificationRulesDataSource struct {
 	client *client.Client
 }
 
-type alertRulesDataSourceModel struct {
-	AlertRules []alertRuleResourceModel `tfsdk:"alert_rules"`
+type notificationRulesDataSourceModel struct {
+	NotificationRules []notificationRuleResourceModel `tfsdk:"notification_rules"`
 }
 
-func (d *alertRulesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_alert_rules"
+func (d *notificationRulesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_notification_rules"
 }
 
-func (d *alertRulesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *notificationRulesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Fetches all alert rules in the organization.",
+		Description: "Fetches all notification rules in the organization.",
 		Attributes: map[string]schema.Attribute{
-			"alert_rules": schema.ListNestedAttribute{
+			"notification_rules": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -128,7 +128,7 @@ func (d *alertRulesDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 	}
 }
 
-func (d *alertRulesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *notificationRulesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -140,17 +140,17 @@ func (d *alertRulesDataSource) Configure(_ context.Context, req datasource.Confi
 	d.client = c
 }
 
-func (d *alertRulesDataSource) Read(ctx context.Context, _ datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var apiResp []alertRuleAPIModel
-	err := d.client.List(ctx, "/alert-rules/", &apiResp)
+func (d *notificationRulesDataSource) Read(ctx context.Context, _ datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var apiResp []notificationRuleAPIModel
+	err := d.client.List(ctx, "/notification-rules/", &apiResp)
 	if err != nil {
-		resp.Diagnostics.AddError("Error listing alert rules", err.Error())
+		resp.Diagnostics.AddError("Error listing notification rules", err.Error())
 		return
 	}
 
-	state := alertRulesDataSourceModel{}
+	state := notificationRulesDataSourceModel{}
 	for _, r := range apiResp {
-		state.AlertRules = append(state.AlertRules, alertRuleAPIToState(r))
+		state.NotificationRules = append(state.NotificationRules, notificationRuleAPIToState(r))
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -6,7 +6,7 @@ description: |-
 
 # Argonix Provider
 
-The Argonix provider allows you to manage your [Argonix](https://argonix.io) monitoring infrastructure as code. It supports monitors, synthetic tests, alert rules, alert channels, status pages, and test management resources.
+The Argonix provider allows you to manage your [Argonix](https://argonix.io) monitoring infrastructure as code. It supports monitors, synthetic tests, notification rules, alert channels, status pages, and test management resources.
 
 The organization is automatically determined from the API key — no need to specify it separately.
 

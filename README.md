@@ -6,7 +6,7 @@ The Argonix Terraform provider allows you to manage your [Argonix](https://argon
 
 - **Monitors** — HTTP, TCP, Ping, DNS, SSL, Keyword, gRPC, Heartbeat, Multi-step HTTP with full config (assertions, remediation, HTTP auth, custom headers, etc.)
 - **Synthetic Tests** — API and browser test flows with multi-step scenarios
-- **Alert Rules** — Flexible alerting on monitor and synthetic test failures
+- **Notification Rules** — Flexible alerting on monitor and synthetic test events (including after each test run for CI/CD)
 - **Alert Channels** — Slack, email, webhook, PagerDuty, and more
 - **Status Pages** — Public or private status pages with custom branding
 - **Groups** — Organize monitors into logical groups
@@ -103,8 +103,8 @@ resource "argonix_alert_channel" "slack" {
   })
 }
 
-# Alert rule
-resource "argonix_alert_rule" "all_down" {
+# Notification rule
+resource "argonix_notification_rule" "all_down" {
   name              = "Alert on any monitor down"
   trigger_condition = "goes_down"
   all_monitors      = true
@@ -126,7 +126,7 @@ resource "argonix_status_page" "public" {
 | `argonix_monitor` | Uptime monitors (HTTP, TCP, Ping, DNS, SSL, Keyword, gRPC, Heartbeat, Multi-step) |
 | `argonix_synthetic_test` | API and browser synthetic tests |
 | `argonix_group` | Monitor groups |
-| `argonix_alert_rule` | Alerting rules |
+| `argonix_notification_rule` | Notification rules |
 | `argonix_alert_channel` | Notification channels |
 | `argonix_status_page` | Public/private status pages |
 | `argonix_test_suite` | Test suites |
@@ -140,7 +140,7 @@ resource "argonix_status_page" "public" {
 | `argonix_monitor` / `argonix_monitors` | Read monitors |
 | `argonix_synthetic_test` / `argonix_synthetic_tests` | Read synthetic tests |
 | `argonix_group` / `argonix_groups` | Read groups |
-| `argonix_alert_rule` / `argonix_alert_rules` | Read alert rules |
+| `argonix_notification_rule` / `argonix_notification_rules` | Read notification rules |
 | `argonix_alert_channel` / `argonix_alert_channels` | Read alert channels |
 | `argonix_status_page` / `argonix_status_pages` | Read status pages |
 | `argonix_test_suite` / `argonix_test_suites` | Read test suites |

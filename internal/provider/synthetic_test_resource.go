@@ -240,19 +240,22 @@ func syntheticTestStateToPayload(plan syntheticTestResourceModel) map[string]int
 	}
 
 	var steps interface{}
-	json.Unmarshal([]byte(plan.Steps.ValueString()), &steps)
-	payload["steps"] = steps
+	if err := json.Unmarshal([]byte(plan.Steps.ValueString()), &steps); err == nil {
+		payload["steps"] = steps
+	}
 
 	if !plan.Tags.IsNull() && !plan.Tags.IsUnknown() {
 		var tags interface{}
-		json.Unmarshal([]byte(plan.Tags.ValueString()), &tags)
-		payload["tags"] = tags
+		if err := json.Unmarshal([]byte(plan.Tags.ValueString()), &tags); err == nil {
+			payload["tags"] = tags
+		}
 	}
 
 	if !plan.Locations.IsNull() && !plan.Locations.IsUnknown() {
 		var locations interface{}
-		json.Unmarshal([]byte(plan.Locations.ValueString()), &locations)
-		payload["locations"] = locations
+		if err := json.Unmarshal([]byte(plan.Locations.ValueString()), &locations); err == nil {
+			payload["locations"] = locations
+		}
 	}
 
 	return payload

@@ -84,8 +84,8 @@ resource "argonix_alert_channel" "email_ops" {
   })
 }
 
-# --- Alert Rule ---
-resource "argonix_alert_rule" "all_down" {
+# --- Notification Rule ---
+resource "argonix_notification_rule" "all_down" {
   name              = "Alert on any monitor down"
   trigger_condition = "goes_down"
   all_monitors      = true

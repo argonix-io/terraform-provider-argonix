@@ -186,8 +186,9 @@ func alertChannelStateToPayload(plan alertChannelResourceModel) map[string]inter
 	}
 
 	var config interface{}
-	json.Unmarshal([]byte(plan.Config.ValueString()), &config)
-	payload["config"] = config
+	if err := json.Unmarshal([]byte(plan.Config.ValueString()), &config); err == nil {
+		payload["config"] = config
+	}
 
 	return payload
 }

@@ -215,8 +215,9 @@ func testSuiteStateToPayload(plan testSuiteResourceModel) map[string]interface{}
 func unmarshalJSONFieldIfSet(field types.String, key string, payload map[string]interface{}) {
 	if !field.IsNull() && !field.IsUnknown() {
 		var v interface{}
-		json.Unmarshal([]byte(field.ValueString()), &v)
-		payload[key] = v
+		if err := json.Unmarshal([]byte(field.ValueString()), &v); err == nil {
+			payload[key] = v
+		}
 	}
 }
 
@@ -245,14 +246,14 @@ func (d *testSuiteDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 	resp.Schema = dsschema.Schema{
 		Description: "Fetches a single Argonix test suite by ID.",
 		Attributes: map[string]dsschema.Attribute{
-			"id":               dsschema.StringAttribute{Required: true},
-			"name":             dsschema.StringAttribute{Computed: true},
-			"description":      dsschema.StringAttribute{Computed: true},
-			"tags":             dsschema.StringAttribute{Computed: true},
-			"synthetic_tests":  dsschema.StringAttribute{Computed: true},
+			"id":                dsschema.StringAttribute{Required: true},
+			"name":              dsschema.StringAttribute{Computed: true},
+			"description":       dsschema.StringAttribute{Computed: true},
+			"tags":              dsschema.StringAttribute{Computed: true},
+			"synthetic_tests":   dsschema.StringAttribute{Computed: true},
 			"manual_test_cases": dsschema.StringAttribute{Computed: true},
-			"date_created":     dsschema.StringAttribute{Computed: true},
-			"date_modified":    dsschema.StringAttribute{Computed: true},
+			"date_created":      dsschema.StringAttribute{Computed: true},
+			"date_modified":     dsschema.StringAttribute{Computed: true},
 		},
 	}
 }

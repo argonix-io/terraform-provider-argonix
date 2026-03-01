@@ -562,42 +562,44 @@ func unmarshalJSONPayload(s types.String) interface{} {
 		return nil
 	}
 	var v interface{}
-	json.Unmarshal([]byte(s.ValueString()), &v)
+	if err := json.Unmarshal([]byte(s.ValueString()), &v); err != nil {
+		return nil
+	}
 	return v
 }
 
 func monitorStateToPayload(plan monitorResourceModel) map[string]interface{} {
 	payload := map[string]interface{}{
-		"name":                    plan.Name.ValueString(),
-		"monitor_type":            plan.MonitorType.ValueString(),
-		"is_active":               plan.IsActive.ValueBool(),
-		"url":                     plan.URL.ValueString(),
-		"hostname":                plan.Hostname.ValueString(),
-		"dns_record_type":         plan.DNSRecordType.ValueString(),
-		"dns_expected":            plan.DNSExpected.ValueString(),
-		"http_method":             plan.HTTPMethod.ValueString(),
-		"http_body":               plan.HTTPBody.ValueString(),
-		"http_body_content_type":  plan.HTTPBodyContentType.ValueString(),
-		"follow_redirects":        plan.FollowRedirects.ValueBool(),
-		"verify_ssl":              plan.VerifySSL.ValueBool(),
-		"http_auth_user":          plan.HTTPAuthUser.ValueString(),
-		"http_auth_pass":          plan.HTTPAuthPass.ValueString(),
-		"keyword":                 plan.Keyword.ValueString(),
-		"keyword_exists":          plan.KeywordExists.ValueBool(),
-		"check_interval":          plan.CheckInterval.ValueInt64(),
-		"timeout":                 plan.Timeout.ValueInt64(),
-		"retries":                 plan.Retries.ValueInt64(),
-		"remediation_enabled":     plan.RemediationEnabled.ValueBool(),
-		"remediation_script":      plan.RemediationScript.ValueString(),
-		"remediation_timeout":     plan.RemediationTimeout.ValueInt64(),
+		"name":                     plan.Name.ValueString(),
+		"monitor_type":             plan.MonitorType.ValueString(),
+		"is_active":                plan.IsActive.ValueBool(),
+		"url":                      plan.URL.ValueString(),
+		"hostname":                 plan.Hostname.ValueString(),
+		"dns_record_type":          plan.DNSRecordType.ValueString(),
+		"dns_expected":             plan.DNSExpected.ValueString(),
+		"http_method":              plan.HTTPMethod.ValueString(),
+		"http_body":                plan.HTTPBody.ValueString(),
+		"http_body_content_type":   plan.HTTPBodyContentType.ValueString(),
+		"follow_redirects":         plan.FollowRedirects.ValueBool(),
+		"verify_ssl":               plan.VerifySSL.ValueBool(),
+		"http_auth_user":           plan.HTTPAuthUser.ValueString(),
+		"http_auth_pass":           plan.HTTPAuthPass.ValueString(),
+		"keyword":                  plan.Keyword.ValueString(),
+		"keyword_exists":           plan.KeywordExists.ValueBool(),
+		"check_interval":           plan.CheckInterval.ValueInt64(),
+		"timeout":                  plan.Timeout.ValueInt64(),
+		"retries":                  plan.Retries.ValueInt64(),
+		"remediation_enabled":      plan.RemediationEnabled.ValueBool(),
+		"remediation_script":       plan.RemediationScript.ValueString(),
+		"remediation_timeout":      plan.RemediationTimeout.ValueInt64(),
 		"remediation_wait_seconds": plan.RemediationWaitSeconds.ValueInt64(),
-		"heartbeat_grace_seconds": plan.HeartbeatGraceSeconds.ValueInt64(),
-		"grpc_service":            plan.GRPCService.ValueString(),
-		"grpc_method":             plan.GRPCMethod.ValueString(),
-		"grpc_proto":              plan.GRPCProto.ValueString(),
-		"grpc_tls":                plan.GRPCTLS.ValueBool(),
-		"ssl_expiry_warn_days":    plan.SSLExpiryWarnDays.ValueInt64(),
-		"location":                plan.Location.ValueString(),
+		"heartbeat_grace_seconds":  plan.HeartbeatGraceSeconds.ValueInt64(),
+		"grpc_service":             plan.GRPCService.ValueString(),
+		"grpc_method":              plan.GRPCMethod.ValueString(),
+		"grpc_proto":               plan.GRPCProto.ValueString(),
+		"grpc_tls":                 plan.GRPCTLS.ValueBool(),
+		"ssl_expiry_warn_days":     plan.SSLExpiryWarnDays.ValueInt64(),
+		"location":                 plan.Location.ValueString(),
 	}
 
 	if !plan.Port.IsNull() && !plan.Port.IsUnknown() {

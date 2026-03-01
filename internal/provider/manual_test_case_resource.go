@@ -211,8 +211,9 @@ func manualTestCaseStateToPayload(plan manualTestCaseResourceModel) map[string]i
 	}
 
 	var steps interface{}
-	json.Unmarshal([]byte(plan.Steps.ValueString()), &steps)
-	payload["steps"] = steps
+	if err := json.Unmarshal([]byte(plan.Steps.ValueString()), &steps); err == nil {
+		payload["steps"] = steps
+	}
 
 	unmarshalJSONFieldIfSet(plan.Tags, "tags", payload)
 

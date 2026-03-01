@@ -186,8 +186,9 @@ func groupStateToPayload(plan groupResourceModel) map[string]interface{} {
 
 	if !plan.Tags.IsNull() && !plan.Tags.IsUnknown() {
 		var tags interface{}
-		json.Unmarshal([]byte(plan.Tags.ValueString()), &tags)
-		payload["tags"] = tags
+		if err := json.Unmarshal([]byte(plan.Tags.ValueString()), &tags); err == nil {
+			payload["tags"] = tags
+		}
 	}
 
 	return payload

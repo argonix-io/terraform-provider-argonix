@@ -177,10 +177,3 @@ func (d *monitorsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 }
-
-// In the single data source, override "id" to be Required instead of Computed.
-func monitorDataSourceSingleAttributes() map[string]schema.Attribute {
-	attrs := monitorDataSourceAttributes()
-	attrs["id"] = schema.StringAttribute{Required: true, Description: "UUID of the monitor."}
-	return attrs
-}

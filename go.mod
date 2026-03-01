@@ -1,4 +1,4 @@
-module terraform-provider-argonix
+module github.com/argonix-io/terraform-provider-argonix
 
 go 1.25.5
 

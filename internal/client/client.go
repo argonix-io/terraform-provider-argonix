@@ -18,16 +18,51 @@ type Client struct {
 	HTTPClient     *http.Client
 }
 
+// APIKeyInfo is the response from the api-key-info endpoint.
+type APIKeyInfo struct {
+	KeyName          string   `json:"key_name"`
+	KeyPrefix        string   `json:"key_prefix"`
+	OrganizationID   string   `json:"organization_id"`
+	OrganizationName string   `json:"organization_name"`
+	Permissions      []string `json:"permissions"`
+}
+
 // NewClient creates a new Argonix API client.
-func NewClient(baseURL, apiKey, organizationID string) *Client {
-	return &Client{
-		BaseURL:        baseURL,
-		APIKey:         apiKey,
-		OrganizationID: organizationID,
+// It discovers the organization ID automatically from the API key.
+func NewClient(baseURL, apiKey string) (*Client, error) {
+	c := &Client{
+		BaseURL: baseURL,
+		APIKey:  apiKey,
 		HTTPClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}
+
+	// Discover organization ID from the API key
+	info, err := c.GetAPIKeyInfo(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve organization from API key: %w", err)
+	}
+	c.OrganizationID = info.OrganizationID
+
+	return c, nil
+}
+
+// GetAPIKeyInfo calls the api-key-info endpoint to retrieve key metadata.
+func (c *Client) GetAPIKeyInfo(ctx context.Context) (*APIKeyInfo, error) {
+	url := fmt.Sprintf("%s/api/0.1/auth/api-key-info/", c.BaseURL)
+	body, status, err := c.doRequest(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("api-key-info returned status %d: %s", status, string(body))
+	}
+	var info APIKeyInfo
+	if err := json.Unmarshal(body, &info); err != nil {
+		return nil, fmt.Errorf("decoding api-key-info response: %w", err)
+	}
+	return &info, nil
 }
 
 // orgURL returns the base URL for org-scoped endpoints.

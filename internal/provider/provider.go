@@ -34,9 +34,8 @@ type argonixProvider struct {
 
 // argonixProviderModel maps provider schema data to a Go type.
 type argonixProviderModel struct {
-	URL            types.String `tfsdk:"url"`
-	APIKey         types.String `tfsdk:"api_key"`
-	OrganizationID types.String `tfsdk:"organization_id"`
+	URL    types.String `tfsdk:"url"`
+	APIKey types.String `tfsdk:"api_key"`
 }
 
 // Metadata returns the provider type name.
@@ -55,13 +54,9 @@ func (p *argonixProvider) Schema(_ context.Context, _ provider.SchemaRequest, re
 				Optional:    true,
 			},
 			"api_key": schema.StringAttribute{
-				Description: "API key for authenticating with Argonix. Can also be set via the ARGONIX_API_KEY environment variable.",
+				Description: "API key for authenticating with Argonix. The organization is automatically determined from the key. Can also be set via the ARGONIX_API_KEY environment variable.",
 				Required:    true,
 				Sensitive:   true,
-			},
-			"organization_id": schema.StringAttribute{
-				Description: "The UUID of the organization to manage resources in. Can also be set via the ARGONIX_ORGANIZATION_ID environment variable.",
-				Required:    true,
 			},
 		},
 	}
@@ -79,16 +74,12 @@ func (p *argonixProvider) Configure(ctx context.Context, req provider.ConfigureR
 	// Default values from environment
 	url := os.Getenv("ARGONIX_URL")
 	apiKey := os.Getenv("ARGONIX_API_KEY")
-	organizationID := os.Getenv("ARGONIX_ORGANIZATION_ID")
 
 	if !config.URL.IsNull() {
 		url = config.URL.ValueString()
 	}
 	if !config.APIKey.IsNull() {
 		apiKey = config.APIKey.ValueString()
-	}
-	if !config.OrganizationID.IsNull() {
-		organizationID = config.OrganizationID.ValueString()
 	}
 
 	// Apply defaults
@@ -106,21 +97,21 @@ func (p *argonixProvider) Configure(ctx context.Context, req provider.ConfigureR
 		)
 	}
 
-	if organizationID == "" {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("organization_id"),
-			"Missing Argonix Organization ID",
-			"The provider cannot create the Argonix API client as there is a missing or empty value for the organization ID. "+
-				"Set the organization_id value in the configuration or use the ARGONIX_ORGANIZATION_ID environment variable.",
-		)
-	}
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Create client
-	c := client.NewClient(url, apiKey, organizationID)
+	// Create client — this also discovers the organization from the API key
+	c, err := client.NewClient(url, apiKey)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to Create Argonix API Client",
+			"An unexpected error occurred when creating the Argonix API client. "+
+				"Ensure the API key is valid and the Argonix API is reachable.\n\n"+
+				"Error: "+err.Error(),
+		)
+		return
+	}
 	resp.DataSourceData = c
 	resp.ResourceData = c
 }
@@ -140,7 +131,6 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewAlertChannelsDataSource,
 		NewStatusPageDataSource,
 		NewStatusPagesDataSource,
-		NewEnvironmentDataSource,
 		NewTestSuiteDataSource,
 		NewManualTestCaseDataSource,
 		NewTestPlanDataSource,
@@ -156,7 +146,6 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewAlertRuleResource,
 		NewAlertChannelResource,
 		NewStatusPageResource,
-		NewEnvironmentResource,
 		NewTestSuiteResource,
 		NewManualTestCaseResource,
 		NewTestPlanResource,

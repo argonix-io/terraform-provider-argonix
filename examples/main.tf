@@ -9,18 +9,13 @@ terraform {
 }
 
 provider "argonix" {
-  # url     = "https://api.argonix.io"  # optional, this is the default
-  api_key         = var.argonix_api_key
-  organization_id = var.argonix_organization_id
+  # url = "https://api.argonix.io"  # optional, this is the default
+  api_key = var.argonix_api_key
 }
 
 variable "argonix_api_key" {
   type      = string
   sensitive = true
-}
-
-variable "argonix_organization_id" {
-  type = string
 }
 
 # --- Group ---

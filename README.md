@@ -78,7 +78,7 @@ resource "argonix_monitor" "api_health" {
   timeout        = 10
   group_id       = argonix_group.production.id
   tags           = jsonencode(["api", "health"])
-  regions        = jsonencode(["eu-france", "us-east"])
+  regions        = jsonencode(["eu-france"])
   assertions = jsonencode([
     { type = "status_code", operator = "equals", value = "200" }
   ])

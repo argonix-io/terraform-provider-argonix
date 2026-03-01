@@ -35,7 +35,7 @@ resource "argonix_monitor" "api_health" {
   http_method    = "GET"
   group_id       = argonix_group.production.id
   tags           = jsonencode(["api", "health"])
-  regions        = jsonencode(["eu-france", "us-east"])
+  regions        = jsonencode(["eu-france"])
 }
 
 resource "argonix_monitor" "database_ping" {

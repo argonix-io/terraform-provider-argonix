@@ -38,6 +38,7 @@ type notificationRuleResourceModel struct {
 	CooldownMinutes     types.Int64  `tfsdk:"cooldown_minutes"`
 	AllMonitors         types.Bool   `tfsdk:"all_monitors"`
 	AllSyntheticTests   types.Bool   `tfsdk:"all_synthetic_tests"`
+	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
 	MonitorTags         types.String `tfsdk:"monitor_tags"`
 	Monitors            types.String `tfsdk:"monitors"`
 	SyntheticTests      types.String `tfsdk:"synthetic_tests"`
@@ -55,6 +56,7 @@ type notificationRuleAPIModel struct {
 	CooldownMinutes     int64       `json:"cooldown_minutes"`
 	AllMonitors         bool        `json:"all_monitors"`
 	AllSyntheticTests   bool        `json:"all_synthetic_tests"`
+	AutoInvestigate     bool        `json:"auto_investigate"`
 	MonitorTags         interface{} `json:"monitor_tags"`
 	Monitors            interface{} `json:"monitors"`
 	SyntheticTests      interface{} `json:"synthetic_tests"`
@@ -78,6 +80,7 @@ func notificationRuleAPIToState(api notificationRuleAPIModel) notificationRuleRe
 		CooldownMinutes:     types.Int64Value(api.CooldownMinutes),
 		AllMonitors:         types.BoolValue(api.AllMonitors),
 		AllSyntheticTests:   types.BoolValue(api.AllSyntheticTests),
+		AutoInvestigate:     types.BoolValue(api.AutoInvestigate),
 		MonitorTags:         types.StringValue(string(monitorTagsJSON)),
 		Monitors:            types.StringValue(string(monitorsJSON)),
 		SyntheticTests:      types.StringValue(string(syntheticTestsJSON)),
@@ -156,6 +159,12 @@ func (r *notificationRuleResource) Schema(_ context.Context, _ resource.SchemaRe
 			"channels": schema.StringAttribute{
 				Required:    true,
 				Description: "JSON-encoded list of notification channel UUIDs.",
+			},
+			"auto_investigate": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: "When triggered, Argos AI automatically investigates the root cause and posts analysis to channels.",
 			},
 			"date_created":  schema.StringAttribute{Computed: true},
 			"date_modified": schema.StringAttribute{Computed: true},
@@ -253,6 +262,7 @@ func notificationRuleStateToPayload(plan notificationRuleResourceModel) map[stri
 		"cooldown_minutes":     plan.CooldownMinutes.ValueInt64(),
 		"all_monitors":         plan.AllMonitors.ValueBool(),
 		"all_synthetic_tests":  plan.AllSyntheticTests.ValueBool(),
+		"auto_investigate":     plan.AutoInvestigate.ValueBool(),
 	}
 
 	unmarshalJSONField(plan.MonitorTags.ValueString(), "monitor_tags", payload)

@@ -134,6 +134,20 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewTestSuiteDataSource,
 		NewManualTestCaseDataSource,
 		NewTestPlanDataSource,
+		NewConnectorDataSource,
+		NewConnectorsDataSource,
+		NewPersonaDataSource,
+		NewPersonasDataSource,
+		NewKnowledgeBaseDataSource,
+		NewKnowledgeBasesDataSource,
+		NewWorkflowDataSource,
+		NewWorkflowsDataSource,
+		NewChatChannelDataSource,
+		NewChatChannelsDataSource,
+		NewMaintenanceWindowDataSource,
+		NewMaintenanceWindowsDataSource,
+		NewEnvironmentDataSource,
+		NewEnvironmentsDataSource,
 	}
 }
 
@@ -149,5 +163,12 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewTestSuiteResource,
 		NewManualTestCaseResource,
 		NewTestPlanResource,
+		NewConnectorResource,
+		NewPersonaResource,
+		NewKnowledgeBaseResource,
+		NewWorkflowResource,
+		NewChatChannelResource,
+		NewMaintenanceWindowResource,
+		NewEnvironmentResource,
 	}
 }

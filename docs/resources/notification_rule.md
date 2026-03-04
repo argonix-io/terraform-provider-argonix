@@ -16,6 +16,7 @@ resource "argonix_notification_rule" "down_alert" {
   trigger_condition = "goes_down"
   all_monitors      = true
   channels          = jsonencode([argonix_alert_channel.slack.id])
+  auto_investigate   = true
 }
 ```
 
@@ -56,6 +57,7 @@ resource "argonix_notification_rule" "ci_webhook" {
 - `monitor_tags` (String, Optional) — JSON-encoded list of tags to match monitors.
 - `consecutive_failures` (Integer, Optional) — Failures before triggering. Default `1`.
 - `cooldown_minutes` (Integer, Optional) — Minimum minutes between repeated notifications. Default `5`.
+- `auto_investigate` (Boolean, Optional) — When triggered, Argos AI automatically investigates the root cause and posts analysis to channels. Default `false`.
 
 ## Attribute Reference
 

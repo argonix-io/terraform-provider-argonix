@@ -39,6 +39,8 @@ type notificationRuleResourceModel struct {
 	AllMonitors         types.Bool   `tfsdk:"all_monitors"`
 	AllSyntheticTests   types.Bool   `tfsdk:"all_synthetic_tests"`
 	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
+	AutoRemediate       types.Bool   `tfsdk:"auto_remediate"`
+	RemediationStrategy types.String `tfsdk:"remediation_strategy"`
 	MonitorTags         types.String `tfsdk:"monitor_tags"`
 	Monitors            types.String `tfsdk:"monitors"`
 	SyntheticTests      types.String `tfsdk:"synthetic_tests"`
@@ -57,6 +59,8 @@ type notificationRuleAPIModel struct {
 	AllMonitors         bool        `json:"all_monitors"`
 	AllSyntheticTests   bool        `json:"all_synthetic_tests"`
 	AutoInvestigate     bool        `json:"auto_investigate"`
+	AutoRemediate       bool        `json:"auto_remediate"`
+	RemediationStrategy string      `json:"remediation_strategy"`
 	MonitorTags         interface{} `json:"monitor_tags"`
 	Monitors            interface{} `json:"monitors"`
 	SyntheticTests      interface{} `json:"synthetic_tests"`
@@ -81,6 +85,8 @@ func notificationRuleAPIToState(api notificationRuleAPIModel) notificationRuleRe
 		AllMonitors:         types.BoolValue(api.AllMonitors),
 		AllSyntheticTests:   types.BoolValue(api.AllSyntheticTests),
 		AutoInvestigate:     types.BoolValue(api.AutoInvestigate),
+		AutoRemediate:       types.BoolValue(api.AutoRemediate),
+		RemediationStrategy: types.StringValue(api.RemediationStrategy),
 		MonitorTags:         types.StringValue(string(monitorTagsJSON)),
 		Monitors:            types.StringValue(string(monitorsJSON)),
 		SyntheticTests:      types.StringValue(string(syntheticTestsJSON)),
@@ -165,6 +171,18 @@ func (r *notificationRuleResource) Schema(_ context.Context, _ resource.SchemaRe
 				Computed:    true,
 				Default:     booldefault.StaticBool(false),
 				Description: "When triggered, Argos AI automatically investigates the root cause and posts analysis to channels.",
+			},
+			"auto_remediate": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: "When triggered, Argos AI proposes and/or executes remediation actions. Requires auto_investigate to be true.",
+			},
+			"remediation_strategy": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("approval_required"),
+				Description: "How remediation is executed: 'auto' (execute immediately) or 'approval_required' (propose and wait for approval).",
 			},
 			"date_created":  schema.StringAttribute{Computed: true},
 			"date_modified": schema.StringAttribute{Computed: true},
@@ -263,6 +281,8 @@ func notificationRuleStateToPayload(plan notificationRuleResourceModel) map[stri
 		"all_monitors":         plan.AllMonitors.ValueBool(),
 		"all_synthetic_tests":  plan.AllSyntheticTests.ValueBool(),
 		"auto_investigate":     plan.AutoInvestigate.ValueBool(),
+		"auto_remediate":       plan.AutoRemediate.ValueBool(),
+		"remediation_strategy": plan.RemediationStrategy.ValueString(),
 	}
 
 	unmarshalJSONField(plan.MonitorTags.ValueString(), "monitor_tags", payload)

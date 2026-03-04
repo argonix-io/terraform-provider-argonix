@@ -103,7 +103,7 @@ func (r *chatChannelResource) Schema(_ context.Context, _ resource.SchemaRequest
 			},
 			"channel_type": schema.StringAttribute{
 				Required:    true,
-				Description: "Chat channel type: slack, teams, jira.",
+				Description: "Chat channel type: slack, teams, discord, jira.",
 			},
 			"channel_id": schema.StringAttribute{
 				Optional:    true,

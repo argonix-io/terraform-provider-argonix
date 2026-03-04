@@ -6,7 +6,7 @@ description: |-
 
 # argonix_chat_channel (Resource)
 
-Manages an Argonix Argos chat channel. Chat channels connect AI personas to messaging platforms (Slack, Teams, Jira) for interactive incident management.
+Manages an Argonix Argos chat channel. Chat channels connect AI personas to messaging platforms (Slack, Teams, Discord, Jira) for interactive incident management.
 
 ## Example Usage
 
@@ -26,13 +26,21 @@ resource "argonix_chat_channel" "teams" {
   persona_id   = argonix_persona.devops.id
   connector_id = argonix_connector.teams.id
 }
+
+resource "argonix_chat_channel" "discord" {
+  channel_type = "discord"
+  channel_id   = "1234567890123456789"
+  channel_name = "#ops-alerts"
+  persona_id   = argonix_persona.devops.id
+  connector_id = argonix_connector.discord.id
+}
 ```
 
 ## Schema
 
 ### Required
 
-- `channel_type` (String) — Type of channel. One of: `slack`, `teams`, `jira`.
+- `channel_type` (String) — Type of channel. One of: `slack`, `teams`, `discord`, `jira`.
 - `channel_id` (String) — External channel identifier.
 - `connector_id` (String) — UUID of the connector for this channel.
 

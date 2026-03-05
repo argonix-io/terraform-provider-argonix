@@ -102,6 +102,9 @@ resource "argonix_monitor" "auto_heal" {
   remediation_script       = "#!/bin/bash\nsystemctl restart myapp"
   remediation_timeout      = 120
   remediation_wait_seconds = 60
+  auto_investigate         = true
+  auto_remediate           = true
+  remediation_strategy     = "approval_required"
 }
 ```
 
@@ -161,6 +164,12 @@ resource "argonix_monitor" "auto_heal" {
 - `remediation_script` (String) — Shell script to execute when remediation is triggered. Defaults to `""`.
 - `remediation_timeout` (Number) — Maximum execution time for the remediation script in seconds. Defaults to `60`.
 - `remediation_wait_seconds` (Number) — Seconds to wait after remediation before rechecking. Defaults to `30`.
+
+**Argos AI**
+
+- `auto_investigate` (Boolean) — Enable Argos AI auto-investigation when the monitor goes down. Defaults to `false`.
+- `auto_remediate` (Boolean) — Enable Argos AI auto-remediation after investigation. Defaults to `false`.
+- `remediation_strategy` (String) — Remediation strategy: `auto` or `approval_required`. Defaults to `"approval_required"`.
 
 **Heartbeat**
 

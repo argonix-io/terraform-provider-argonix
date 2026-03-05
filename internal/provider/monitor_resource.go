@@ -64,6 +64,10 @@ type monitorResourceModel struct {
 	RemediationScript      types.String `tfsdk:"remediation_script"`
 	RemediationTimeout     types.Int64  `tfsdk:"remediation_timeout"`
 	RemediationWaitSeconds types.Int64  `tfsdk:"remediation_wait_seconds"`
+	// Argos AI
+	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
+	AutoRemediate       types.Bool   `tfsdk:"auto_remediate"`
+	RemediationStrategy types.String `tfsdk:"remediation_strategy"`
 	// Heartbeat
 	HeartbeatToken        types.String `tfsdk:"heartbeat_token"`
 	HeartbeatGraceSeconds types.Int64  `tfsdk:"heartbeat_grace_seconds"`
@@ -118,6 +122,9 @@ type monitorAPIModel struct {
 	RemediationScript      string      `json:"remediation_script"`
 	RemediationTimeout     int64       `json:"remediation_timeout"`
 	RemediationWaitSeconds int64       `json:"remediation_wait_seconds"`
+	AutoInvestigate        bool        `json:"auto_investigate"`
+	AutoRemediate          bool        `json:"auto_remediate"`
+	RemediationStrategy    string      `json:"remediation_strategy"`
 	HeartbeatToken         string      `json:"heartbeat_token"`
 	HeartbeatGraceSeconds  int64       `json:"heartbeat_grace_seconds"`
 	MultiStepConfig        interface{} `json:"multi_step_config"`
@@ -169,6 +176,9 @@ func monitorAPIToState(api monitorAPIModel) monitorResourceModel {
 		RemediationScript:      types.StringValue(api.RemediationScript),
 		RemediationTimeout:     types.Int64Value(api.RemediationTimeout),
 		RemediationWaitSeconds: types.Int64Value(api.RemediationWaitSeconds),
+		AutoInvestigate:        types.BoolValue(api.AutoInvestigate),
+		AutoRemediate:          types.BoolValue(api.AutoRemediate),
+		RemediationStrategy:    types.StringValue(api.RemediationStrategy),
 		HeartbeatToken:         types.StringValue(api.HeartbeatToken),
 		HeartbeatGraceSeconds:  types.Int64Value(api.HeartbeatGraceSeconds),
 		MultiStepConfig:        marshalJSONField(api.MultiStepConfig),
@@ -369,6 +379,25 @@ func (r *monitorResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 				Computed:    true,
 				Default:     int64default.StaticInt64(30),
 				Description: "Seconds to wait after remediation before rechecking.",
+			},
+			// Argos AI
+			"auto_investigate": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: "Enable Argos AI auto-investigation when the monitor goes down.",
+			},
+			"auto_remediate": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: "Enable Argos AI auto-remediation after investigation.",
+			},
+			"remediation_strategy": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("approval_required"),
+				Description: "Remediation strategy: auto or approval_required.",
 			},
 			// Heartbeat
 			"heartbeat_token": schema.StringAttribute{
@@ -593,6 +622,9 @@ func monitorStateToPayload(plan monitorResourceModel) map[string]interface{} {
 		"remediation_script":       plan.RemediationScript.ValueString(),
 		"remediation_timeout":      plan.RemediationTimeout.ValueInt64(),
 		"remediation_wait_seconds": plan.RemediationWaitSeconds.ValueInt64(),
+		"auto_investigate":         plan.AutoInvestigate.ValueBool(),
+		"auto_remediate":           plan.AutoRemediate.ValueBool(),
+		"remediation_strategy":     plan.RemediationStrategy.ValueString(),
 		"heartbeat_grace_seconds":  plan.HeartbeatGraceSeconds.ValueInt64(),
 		"grpc_service":             plan.GRPCService.ValueString(),
 		"grpc_method":              plan.GRPCMethod.ValueString(),

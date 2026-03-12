@@ -164,6 +164,7 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewManualTestCaseResource,
 		NewTestPlanResource,
 		NewConnectorResource,
+		NewArgosSettingsResource,
 		NewPersonaResource,
 		NewKnowledgeBaseResource,
 		NewWorkflowResource,

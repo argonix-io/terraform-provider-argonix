@@ -3,7 +3,7 @@
 terraform {
   required_providers {
     argonix = {
-      source = "hashicorp.com/argonix-io/argonix"
+      source = "argonix-io/argonix"
     }
   }
 }

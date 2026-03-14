@@ -58,13 +58,25 @@ resource "argonix_argos_settings" "main" {
 }
 ```
 
+### Google Vertex AI (Service Account)
+
+```terraform
+resource "argonix_argos_settings" "main" {
+  llm_provider = "google"
+  llm_model    = "gemini-2.5-flash"
+  llm_api_key  = file("service-account.json")  # or var.gcp_sa_json
+}
+```
+
+~> When `llm_api_key` contains a GCP Service Account JSON (with `"type": "service_account"`), Argonix automatically uses **Vertex AI** instead of Google AI Studio. No extra configuration needed.
+
 ## Schema
 
 ### Optional
 
 - `llm_provider` (String) — LLM provider. One of: `local`, `google`, `anthropic`, `openai`. Defaults to `"google"`.
 - `llm_model` (String) — Model override (blank = default for the provider). Any model name is accepted when `llm_base_url` is set.
-- `llm_api_key` (String, Sensitive) — Custom API key for the LLM provider. Leave empty to use the platform default.
+- `llm_api_key` (String, Sensitive) — Custom API key for the LLM provider. For Google, you can also paste a GCP Service Account JSON to use Vertex AI automatically. Leave empty to use the platform default.
 - `llm_base_url` (String) — Custom base URL for the LLM endpoint (e.g. vLLM, Azure OpenAI, self-hosted Ollama).
 - `custom_instructions` (String) — Custom system prompt instructions prepended to every Argos conversation.
 - `demo_mode` (Boolean) — When enabled, Argos returns scripted demo responses instead of calling the LLM.

@@ -148,6 +148,8 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewMaintenanceWindowsDataSource,
 		NewEnvironmentDataSource,
 		NewEnvironmentsDataSource,
+		NewAlertSourceDataSource,
+		NewAlertSourcesDataSource,
 	}
 }
 
@@ -171,5 +173,6 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewChatChannelResource,
 		NewMaintenanceWindowResource,
 		NewEnvironmentResource,
+		NewAlertSourceResource,
 	}
 }

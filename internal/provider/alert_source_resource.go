@@ -137,8 +137,8 @@ func (r *alertSourceResource) Schema(_ context.Context, _ resource.SchemaRequest
 				ElementType: types.StringType,
 				Description: "List of alert channel IDs for investigation/remediation results.",
 			},
-			"webhook_secret":  schema.StringAttribute{Computed: true, Sensitive: true, Description: "Auto-generated secret token in the webhook URL."},
-			"webhook_url":     schema.StringAttribute{Computed: true, Description: "Full webhook URL to configure in the external alert source."},
+			"webhook_secret":   schema.StringAttribute{Computed: true, Sensitive: true, Description: "Auto-generated secret token in the webhook URL."},
+			"webhook_url":      schema.StringAttribute{Computed: true, Description: "Full webhook URL to configure in the external alert source."},
 			"last_received_at": schema.StringAttribute{Computed: true},
 			"total_received":   schema.Int64Attribute{Computed: true},
 			"date_created":     schema.StringAttribute{Computed: true},
@@ -230,12 +230,12 @@ func (r *alertSourceResource) Delete(ctx context.Context, req resource.DeleteReq
 
 func alertSourceStateToPayload(ctx context.Context, plan alertSourceResourceModel) map[string]interface{} {
 	payload := map[string]interface{}{
-		"name":                  plan.Name.ValueString(),
-		"source_type":           plan.SourceType.ValueString(),
-		"is_active":             plan.IsActive.ValueBool(),
-		"auto_investigate":      plan.AutoInvestigate.ValueBool(),
-		"auto_remediate":        plan.AutoRemediate.ValueBool(),
-		"remediation_strategy":  plan.RemediationStrategy.ValueString(),
+		"name":                 plan.Name.ValueString(),
+		"source_type":          plan.SourceType.ValueString(),
+		"is_active":            plan.IsActive.ValueBool(),
+		"auto_investigate":     plan.AutoInvestigate.ValueBool(),
+		"auto_remediate":       plan.AutoRemediate.ValueBool(),
+		"remediation_strategy": plan.RemediationStrategy.ValueString(),
 	}
 
 	if !plan.Connector.IsNull() && !plan.Connector.IsUnknown() {

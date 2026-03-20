@@ -65,8 +65,8 @@ type monitorResourceModel struct {
 	RemediationTimeout     types.Int64  `tfsdk:"remediation_timeout"`
 	RemediationWaitSeconds types.Int64  `tfsdk:"remediation_wait_seconds"`
 	// Argos AI
-	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
-	AutoRemediate       types.Bool   `tfsdk:"auto_remediate"`
+	AutoInvestigate types.Bool `tfsdk:"auto_investigate"`
+	AutoRemediate   types.Bool `tfsdk:"auto_remediate"`
 	// Heartbeat
 	HeartbeatToken        types.String `tfsdk:"heartbeat_token"`
 	HeartbeatGraceSeconds types.Int64  `tfsdk:"heartbeat_grace_seconds"`

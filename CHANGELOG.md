@@ -1,3 +1,11 @@
+## 1.1.3
+
+BREAKING CHANGES:
+
+- Removed `remediation_strategy` attribute from `argonix_monitor` resource. Auto-remediation now always executes immediately when `auto_remediate = true`.
+
+---
+
 ## 1.1.2
 
 BREAKING CHANGES:

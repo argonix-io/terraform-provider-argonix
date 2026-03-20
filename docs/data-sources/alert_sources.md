@@ -31,7 +31,6 @@ output "active_sources" {
   - `filters` (String)
   - `auto_investigate` (Boolean)
   - `auto_remediate` (Boolean)
-  - `remediation_strategy` (String)
   - `channels` (List of String)
   - `webhook_secret` (String, Sensitive)
   - `webhook_url` (String)

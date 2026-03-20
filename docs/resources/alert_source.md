@@ -30,7 +30,6 @@ resource "argonix_alert_source" "datadog" {
   connector            = argonix_connector.datadog.id
   auto_investigate     = true
   auto_remediate       = true
-  remediation_strategy = "approval_required"
   channels             = [argonix_alert_channel.slack_ops.id, argonix_alert_channel.email_ops.id]
 }
 ```
@@ -63,7 +62,6 @@ output "webhook_url" {
 - `filters` (String) — JSON-encoded filter configuration for incoming alerts.
 - `auto_investigate` (Boolean) — Enable Argos AI auto-investigation for ingested alerts. Defaults to `false`.
 - `auto_remediate` (Boolean) — Enable Argos AI auto-remediation. Defaults to `false`.
-- `remediation_strategy` (String) — How remediation is executed: `auto` or `approval_required`. Defaults to `approval_required`.
 - `channels` (List of String) — List of alert channel UUIDs to notify when alerts are ingested.
 
 ### Read-Only

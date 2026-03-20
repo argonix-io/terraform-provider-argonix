@@ -37,7 +37,6 @@ type alertSourceResourceModel struct {
 	Filters             types.String `tfsdk:"filters"`
 	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
 	AutoRemediate       types.Bool   `tfsdk:"auto_remediate"`
-	RemediationStrategy types.String `tfsdk:"remediation_strategy"`
 	Channels            types.List   `tfsdk:"channels"`
 	WebhookSecret       types.String `tfsdk:"webhook_secret"`
 	WebhookURL          types.String `tfsdk:"webhook_url"`
@@ -56,7 +55,6 @@ type alertSourceAPIModel struct {
 	Filters             interface{} `json:"filters"`
 	AutoInvestigate     bool        `json:"auto_investigate"`
 	AutoRemediate       bool        `json:"auto_remediate"`
-	RemediationStrategy string      `json:"remediation_strategy"`
 	Channels            []string    `json:"channels"`
 	WebhookSecret       string      `json:"webhook_secret"`
 	WebhookURL          string      `json:"webhook_url"`
@@ -94,7 +92,6 @@ func alertSourceAPIToState(ctx context.Context, api alertSourceAPIModel) alertSo
 		Filters:             types.StringValue(string(filtersJSON)),
 		AutoInvestigate:     types.BoolValue(api.AutoInvestigate),
 		AutoRemediate:       types.BoolValue(api.AutoRemediate),
-		RemediationStrategy: types.StringValue(api.RemediationStrategy),
 		Channels:            channelsList,
 		WebhookSecret:       types.StringValue(api.WebhookSecret),
 		WebhookURL:          types.StringValue(api.WebhookURL),
@@ -131,7 +128,6 @@ func (r *alertSourceResource) Schema(_ context.Context, _ resource.SchemaRequest
 			},
 			"auto_investigate":     schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(true), Description: "Automatically trigger Argos AI investigation on ingested alerts."},
 			"auto_remediate":       schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(false), Description: "Automatically trigger Argos AI remediation after investigation."},
-			"remediation_strategy": schema.StringAttribute{Optional: true, Computed: true, Default: stringdefault.StaticString("approval_required"), Description: "Remediation strategy: auto, approval_required."},
 			"channels": schema.ListAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
@@ -235,7 +231,6 @@ func alertSourceStateToPayload(ctx context.Context, plan alertSourceResourceMode
 		"is_active":            plan.IsActive.ValueBool(),
 		"auto_investigate":     plan.AutoInvestigate.ValueBool(),
 		"auto_remediate":       plan.AutoRemediate.ValueBool(),
-		"remediation_strategy": plan.RemediationStrategy.ValueString(),
 	}
 
 	if !plan.Connector.IsNull() && !plan.Connector.IsUnknown() {

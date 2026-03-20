@@ -104,7 +104,6 @@ resource "argonix_monitor" "auto_heal" {
   remediation_wait_seconds = 60
   auto_investigate         = true
   auto_remediate           = true
-  remediation_strategy     = "approval_required"
 }
 ```
 
@@ -169,7 +168,6 @@ resource "argonix_monitor" "auto_heal" {
 
 - `auto_investigate` (Boolean) — Enable Argos AI auto-investigation when the monitor goes down. Defaults to `false`.
 - `auto_remediate` (Boolean) — Enable Argos AI auto-remediation after investigation. Defaults to `false`.
-- `remediation_strategy` (String) — Remediation strategy: `auto` or `approval_required`. Defaults to `"approval_required"`.
 
 **Heartbeat**
 

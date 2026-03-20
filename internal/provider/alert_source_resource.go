@@ -29,39 +29,39 @@ type alertSourceResource struct {
 }
 
 type alertSourceResourceModel struct {
-	ID                  types.String `tfsdk:"id"`
-	Name                types.String `tfsdk:"name"`
-	SourceType          types.String `tfsdk:"source_type"`
-	IsActive            types.Bool   `tfsdk:"is_active"`
-	Connector           types.String `tfsdk:"connector"`
-	Filters             types.String `tfsdk:"filters"`
-	AutoInvestigate     types.Bool   `tfsdk:"auto_investigate"`
-	AutoRemediate       types.Bool   `tfsdk:"auto_remediate"`
-	Channels            types.List   `tfsdk:"channels"`
-	WebhookSecret       types.String `tfsdk:"webhook_secret"`
-	WebhookURL          types.String `tfsdk:"webhook_url"`
-	LastReceivedAt      types.String `tfsdk:"last_received_at"`
-	TotalReceived       types.Int64  `tfsdk:"total_received"`
-	DateCreated         types.String `tfsdk:"date_created"`
-	DateModified        types.String `tfsdk:"date_modified"`
+	ID              types.String `tfsdk:"id"`
+	Name            types.String `tfsdk:"name"`
+	SourceType      types.String `tfsdk:"source_type"`
+	IsActive        types.Bool   `tfsdk:"is_active"`
+	Connector       types.String `tfsdk:"connector"`
+	Filters         types.String `tfsdk:"filters"`
+	AutoInvestigate types.Bool   `tfsdk:"auto_investigate"`
+	AutoRemediate   types.Bool   `tfsdk:"auto_remediate"`
+	Channels        types.List   `tfsdk:"channels"`
+	WebhookSecret   types.String `tfsdk:"webhook_secret"`
+	WebhookURL      types.String `tfsdk:"webhook_url"`
+	LastReceivedAt  types.String `tfsdk:"last_received_at"`
+	TotalReceived   types.Int64  `tfsdk:"total_received"`
+	DateCreated     types.String `tfsdk:"date_created"`
+	DateModified    types.String `tfsdk:"date_modified"`
 }
 
 type alertSourceAPIModel struct {
-	ID                  string      `json:"id"`
-	Name                string      `json:"name"`
-	SourceType          string      `json:"source_type"`
-	IsActive            bool        `json:"is_active"`
-	Connector           *string     `json:"connector"`
-	Filters             interface{} `json:"filters"`
-	AutoInvestigate     bool        `json:"auto_investigate"`
-	AutoRemediate       bool        `json:"auto_remediate"`
-	Channels            []string    `json:"channels"`
-	WebhookSecret       string      `json:"webhook_secret"`
-	WebhookURL          string      `json:"webhook_url"`
-	LastReceivedAt      *string     `json:"last_received_at"`
-	TotalReceived       int64       `json:"total_received"`
-	DateCreated         string      `json:"date_created"`
-	DateModified        string      `json:"date_modified"`
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	SourceType      string      `json:"source_type"`
+	IsActive        bool        `json:"is_active"`
+	Connector       *string     `json:"connector"`
+	Filters         interface{} `json:"filters"`
+	AutoInvestigate bool        `json:"auto_investigate"`
+	AutoRemediate   bool        `json:"auto_remediate"`
+	Channels        []string    `json:"channels"`
+	WebhookSecret   string      `json:"webhook_secret"`
+	WebhookURL      string      `json:"webhook_url"`
+	LastReceivedAt  *string     `json:"last_received_at"`
+	TotalReceived   int64       `json:"total_received"`
+	DateCreated     string      `json:"date_created"`
+	DateModified    string      `json:"date_modified"`
 }
 
 func alertSourceAPIToState(ctx context.Context, api alertSourceAPIModel) alertSourceResourceModel {
@@ -84,21 +84,21 @@ func alertSourceAPIToState(ctx context.Context, api alertSourceAPIModel) alertSo
 	}
 
 	return alertSourceResourceModel{
-		ID:                  types.StringValue(api.ID),
-		Name:                types.StringValue(api.Name),
-		SourceType:          types.StringValue(api.SourceType),
-		IsActive:            types.BoolValue(api.IsActive),
-		Connector:           connector,
-		Filters:             types.StringValue(string(filtersJSON)),
-		AutoInvestigate:     types.BoolValue(api.AutoInvestigate),
-		AutoRemediate:       types.BoolValue(api.AutoRemediate),
-		Channels:            channelsList,
-		WebhookSecret:       types.StringValue(api.WebhookSecret),
-		WebhookURL:          types.StringValue(api.WebhookURL),
-		LastReceivedAt:      lastReceived,
-		TotalReceived:       types.Int64Value(api.TotalReceived),
-		DateCreated:         types.StringValue(api.DateCreated),
-		DateModified:        types.StringValue(api.DateModified),
+		ID:              types.StringValue(api.ID),
+		Name:            types.StringValue(api.Name),
+		SourceType:      types.StringValue(api.SourceType),
+		IsActive:        types.BoolValue(api.IsActive),
+		Connector:       connector,
+		Filters:         types.StringValue(string(filtersJSON)),
+		AutoInvestigate: types.BoolValue(api.AutoInvestigate),
+		AutoRemediate:   types.BoolValue(api.AutoRemediate),
+		Channels:        channelsList,
+		WebhookSecret:   types.StringValue(api.WebhookSecret),
+		WebhookURL:      types.StringValue(api.WebhookURL),
+		LastReceivedAt:  lastReceived,
+		TotalReceived:   types.Int64Value(api.TotalReceived),
+		DateCreated:     types.StringValue(api.DateCreated),
+		DateModified:    types.StringValue(api.DateModified),
 	}
 }
 
@@ -126,8 +126,8 @@ func (r *alertSourceResource) Schema(_ context.Context, _ resource.SchemaRequest
 				Default:     stringdefault.StaticString("{}"),
 				Description: `JSON-encoded filter rules: {"min_severity": "warning", "include_tags": ["prod"], "exclude_tags": ["test"]}.`,
 			},
-			"auto_investigate":     schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(true), Description: "Automatically trigger Argos AI investigation on ingested alerts."},
-			"auto_remediate":       schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(false), Description: "Automatically trigger Argos AI remediation after investigation."},
+			"auto_investigate": schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(true), Description: "Automatically trigger Argos AI investigation on ingested alerts."},
+			"auto_remediate":   schema.BoolAttribute{Optional: true, Computed: true, Default: booldefault.StaticBool(false), Description: "Automatically trigger Argos AI remediation after investigation."},
 			"channels": schema.ListAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
@@ -226,11 +226,11 @@ func (r *alertSourceResource) Delete(ctx context.Context, req resource.DeleteReq
 
 func alertSourceStateToPayload(ctx context.Context, plan alertSourceResourceModel) map[string]interface{} {
 	payload := map[string]interface{}{
-		"name":                 plan.Name.ValueString(),
-		"source_type":          plan.SourceType.ValueString(),
-		"is_active":            plan.IsActive.ValueBool(),
-		"auto_investigate":     plan.AutoInvestigate.ValueBool(),
-		"auto_remediate":       plan.AutoRemediate.ValueBool(),
+		"name":             plan.Name.ValueString(),
+		"source_type":      plan.SourceType.ValueString(),
+		"is_active":        plan.IsActive.ValueBool(),
+		"auto_investigate": plan.AutoInvestigate.ValueBool(),
+		"auto_remediate":   plan.AutoRemediate.ValueBool(),
 	}
 
 	if !plan.Connector.IsNull() && !plan.Connector.IsUnknown() {

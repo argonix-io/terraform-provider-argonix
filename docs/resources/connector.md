@@ -35,7 +35,7 @@ resource "argonix_connector" "datadog" {
 ### Required
 
 - `name` (String) — Name of the connector.
-- `connector_type` (String) — Type of connector. One of: `slack`, `teams`, `pagerduty`, `opsgenie`, `jira`, `servicenow`, `github`, `gitlab`, `datadog`, `grafana`, `prometheus`, `cloudwatch`, `elastic`, `splunk`, `sentry`, `new_relic`, `aws`, `gcp`, `azure`, `kubernetes`, `terraform`, `ansible`, `jenkins`, `confluence`, `notion`, `linear`, `zendesk`, `okta`, `custom_webhook`.
+- `connector_type` (String) — Type of connector. One of: `slack`, `teams`, `pagerduty`, `opsgenie`, `jira`, `servicenow`, `github`, `gitlab`, `datadog`, `grafana`, `prometheus`, `cloudwatch`, `elastic`, `splunk`, `sentry`, `new_relic`, `aws`, `gcp`, `azure`, `kubernetes`, `terraform`, `ansible`, `jenkins`, `confluence`, `notion`, `linear`, `zendesk`, `okta`, `custom_webhook`, `mysql`, `postgresql`, `mssql`, `oracle`, `redis`, `memcached`.
 
 ### Optional
 

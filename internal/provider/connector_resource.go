@@ -36,6 +36,7 @@ type connectorResourceModel struct {
 	Config        types.String `tfsdk:"config"`
 	Capabilities  types.String `tfsdk:"capabilities"`
 	Tags          types.String `tfsdk:"tags"`
+	Scopes        types.String `tfsdk:"scopes"`
 	DateCreated   types.String `tfsdk:"date_created"`
 	DateModified  types.String `tfsdk:"date_modified"`
 }
@@ -48,6 +49,7 @@ type connectorAPIModel struct {
 	Config        interface{} `json:"config"`
 	Capabilities  interface{} `json:"capabilities"`
 	Tags          interface{} `json:"tags"`
+	Scopes        interface{} `json:"scopes"`
 	DateCreated   string      `json:"date_created"`
 	DateModified  string      `json:"date_modified"`
 }
@@ -56,6 +58,7 @@ func connectorAPIToState(api connectorAPIModel) connectorResourceModel {
 	configJSON, _ := json.Marshal(api.Config)
 	capsJSON, _ := json.Marshal(api.Capabilities)
 	tagsJSON, _ := json.Marshal(api.Tags)
+	scopesJSON, _ := json.Marshal(api.Scopes)
 	return connectorResourceModel{
 		ID:            types.StringValue(api.ID),
 		Name:          types.StringValue(api.Name),
@@ -64,6 +67,7 @@ func connectorAPIToState(api connectorAPIModel) connectorResourceModel {
 		Config:        types.StringValue(string(configJSON)),
 		Capabilities:  types.StringValue(string(capsJSON)),
 		Tags:          types.StringValue(string(tagsJSON)),
+		Scopes:        types.StringValue(string(scopesJSON)),
 		DateCreated:   types.StringValue(api.DateCreated),
 		DateModified:  types.StringValue(api.DateModified),
 	}
@@ -112,6 +116,12 @@ func (r *connectorResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Computed:    true,
 				Default:     stringdefault.StaticString("[]"),
 				Description: "JSON-encoded tags list.",
+			},
+			"scopes": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("{}"),
+				Description: "JSON-encoded scopes object restricting where the connector can operate (e.g. projects, regions, namespaces).",
 			},
 			"date_created":  schema.StringAttribute{Computed: true},
 			"date_modified": schema.StringAttribute{Computed: true},
@@ -223,6 +233,13 @@ func connectorStateToPayload(plan connectorResourceModel) map[string]interface{}
 		var tags interface{}
 		if err := json.Unmarshal([]byte(plan.Tags.ValueString()), &tags); err == nil {
 			payload["tags"] = tags
+		}
+	}
+
+	if !plan.Scopes.IsNull() && !plan.Scopes.IsUnknown() {
+		var scopes interface{}
+		if err := json.Unmarshal([]byte(plan.Scopes.ValueString()), &scopes); err == nil {
+			payload["scopes"] = scopes
 		}
 	}
 

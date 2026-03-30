@@ -28,6 +28,18 @@ resource "argonix_connector" "datadog" {
     app_key = var.datadog_app_key
   })
 }
+
+resource "argonix_connector" "gcp_scoped" {
+  name           = "GCP Production"
+  connector_type = "gcp"
+  config         = jsonencode({
+    credentials_json = var.gcp_credentials
+  })
+  scopes = jsonencode({
+    projects = ["my-project-prod", "my-project-staging"]
+    regions  = ["europe-west1", "us-central1"]
+  })
+}
 ```
 
 ## Schema
@@ -43,6 +55,7 @@ resource "argonix_connector" "datadog" {
 - `config` (String, Sensitive) — JSON-encoded configuration. Defaults to `"{}"`.
 - `capabilities` (String) — JSON-encoded capabilities list. Defaults to `"[]"`.
 - `tags` (String) — JSON-encoded tags. Defaults to `"[]"`.
+- `scopes` (String) — JSON-encoded scopes object restricting where the connector can operate (e.g. projects, regions, namespaces). Defaults to `"{}"`. See scope keys per connector type via the API.
 
 ### Read-Only
 

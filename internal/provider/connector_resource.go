@@ -93,7 +93,7 @@ func (r *connectorResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 			"connector_type": schema.StringAttribute{
 				Required:    true,
-				Description: "Connector type: slack, jira, pagerduty, opsgenie, discord, telegram, email, webhook, gitlab, github, kubernetes, argocd, terraform, prometheus, loki, elasticsearch, tempo, grafana, datadog, servicenow, aws, gcp, azure, google_workspace, microsoft_365, keycloak, confluence, notion, mysql, postgresql, mssql, oracle, redis, memcached.",
+				Description: "Connector type: slack, jira, pagerduty, opsgenie, discord, telegram, email, webhook, gitlab, github, kubernetes, argocd, terraform, prometheus, loki, elasticsearch, tempo, grafana, datadog, servicenow, aws, gcp, azure, google_workspace, microsoft_365, keycloak, confluence, notion, mysql, postgresql, mssql, oracle, redis, memcached, bigquery.",
 			},
 			"is_active": schema.BoolAttribute{
 				Optional: true,

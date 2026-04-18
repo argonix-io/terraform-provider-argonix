@@ -139,10 +139,10 @@ func (c *Client) Read(ctx context.Context, endpoint string, result interface{}) 
 	return nil
 }
 
-// Update sends a PUT to the given endpoint and decodes the response into result.
+// Update sends a PATCH to the given endpoint and decodes the response into result.
 func (c *Client) Update(ctx context.Context, endpoint string, payload interface{}, result interface{}) error {
 	url := fmt.Sprintf("%s%s", c.orgURL(), endpoint)
-	body, status, err := c.doRequest(ctx, http.MethodPut, url, payload)
+	body, status, err := c.doRequest(ctx, http.MethodPatch, url, payload)
 	if err != nil {
 		return err
 	}

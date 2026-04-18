@@ -152,6 +152,8 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewAlertSourcesDataSource,
 		NewSecurityPolicyDataSource,
 		NewSecurityPoliciesDataSource,
+		NewSecurityScanDataSource,
+		NewSecurityScansDataSource,
 		NewDetectionRuleDataSource,
 		NewDetectionRulesDataSource,
 	}
@@ -179,6 +181,7 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewEnvironmentResource,
 		NewAlertSourceResource,
 		NewSecurityPolicyResource,
+		NewSecurityScanResource,
 		NewDetectionRuleResource,
 	}
 }

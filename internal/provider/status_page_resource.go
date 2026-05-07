@@ -42,6 +42,7 @@ type statusPageResourceModel struct {
 	MetaTitle       types.String `tfsdk:"meta_title"`
 	MetaDescription types.String `tfsdk:"meta_description"`
 	ShowHealthGraph types.Bool   `tfsdk:"show_health_graph"`
+	AutoPublishIncidents types.Bool `tfsdk:"auto_publish_incidents"`
 	IsActive        types.Bool   `tfsdk:"is_active"`
 	DateCreated     types.String `tfsdk:"date_created"`
 	DateModified    types.String `tfsdk:"date_modified"`
@@ -62,6 +63,7 @@ type statusPageAPIModel struct {
 	MetaTitle       string `json:"meta_title"`
 	MetaDescription string `json:"meta_description"`
 	ShowHealthGraph bool   `json:"show_health_graph"`
+	AutoPublishIncidents bool `json:"auto_publish_incidents"`
 	IsActive        bool   `json:"is_active"`
 	DateCreated     string `json:"date_created"`
 	DateModified    string `json:"date_modified"`
@@ -83,6 +85,7 @@ func statusPageAPIToState(api statusPageAPIModel) statusPageResourceModel {
 		MetaTitle:       types.StringValue(api.MetaTitle),
 		MetaDescription: types.StringValue(api.MetaDescription),
 		ShowHealthGraph: types.BoolValue(api.ShowHealthGraph),
+		AutoPublishIncidents: types.BoolValue(api.AutoPublishIncidents),
 		IsActive:        types.BoolValue(api.IsActive),
 		DateCreated:     types.StringValue(api.DateCreated),
 		DateModified:    types.StringValue(api.DateModified),
@@ -165,6 +168,12 @@ func (r *statusPageResource) Schema(_ context.Context, _ resource.SchemaRequest,
 				Optional: true,
 				Computed: true,
 				Default:  booldefault.StaticBool(false),
+			},
+			"auto_publish_incidents": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: "When enabled, incidents on linked monitors are automatically published as status page incidents (and resolved on recovery).",
 			},
 			"is_active": schema.BoolAttribute{
 				Optional: true,
@@ -273,6 +282,7 @@ func statusPageStateToPayload(plan statusPageResourceModel) map[string]interface
 		"meta_title":        plan.MetaTitle.ValueString(),
 		"meta_description":  plan.MetaDescription.ValueString(),
 		"show_health_graph": plan.ShowHealthGraph.ValueBool(),
+		"auto_publish_incidents": plan.AutoPublishIncidents.ValueBool(),
 		"is_active":         plan.IsActive.ValueBool(),
 	}
 }

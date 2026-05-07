@@ -59,6 +59,7 @@ resource "argonix_status_page" "branded" {
 - `meta_title` (String) — HTML meta title for SEO. Defaults to `""`.
 - `meta_description` (String) — HTML meta description for SEO. Defaults to `""`.
 - `show_health_graph` (Boolean) — Whether to show a health graph. Defaults to `false`.
+- `auto_publish_incidents` (Boolean) — When enabled, incidents on linked monitors are automatically published as status page incidents (and resolved on recovery). Defaults to `false`.
 - `is_active` (Boolean) — Whether the page is active. Defaults to `true`.
 
 ### Read-Only

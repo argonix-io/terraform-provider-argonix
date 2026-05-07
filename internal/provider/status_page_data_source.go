@@ -52,6 +52,7 @@ func statusPageDataSourceAttributes() map[string]schema.Attribute {
 		"meta_title":        schema.StringAttribute{Computed: true},
 		"meta_description":  schema.StringAttribute{Computed: true},
 		"show_health_graph": schema.BoolAttribute{Computed: true},
+		"auto_publish_incidents": schema.BoolAttribute{Computed: true},
 		"is_active":         schema.BoolAttribute{Computed: true},
 		"date_created":      schema.StringAttribute{Computed: true},
 		"date_modified":     schema.StringAttribute{Computed: true},

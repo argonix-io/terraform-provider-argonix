@@ -29,29 +29,31 @@ type connectorResource struct {
 }
 
 type connectorResourceModel struct {
-	ID            types.String `tfsdk:"id"`
-	Name          types.String `tfsdk:"name"`
-	ConnectorType types.String `tfsdk:"connector_type"`
-	IsActive      types.Bool   `tfsdk:"is_active"`
-	Config        types.String `tfsdk:"config"`
-	Capabilities  types.String `tfsdk:"capabilities"`
-	Tags          types.String `tfsdk:"tags"`
-	Scopes        types.String `tfsdk:"scopes"`
-	DateCreated   types.String `tfsdk:"date_created"`
-	DateModified  types.String `tfsdk:"date_modified"`
+	ID                   types.String `tfsdk:"id"`
+	Name                 types.String `tfsdk:"name"`
+	ConnectorType        types.String `tfsdk:"connector_type"`
+	IsActive             types.Bool   `tfsdk:"is_active"`
+	SecurityScanEnabled  types.Bool   `tfsdk:"security_scan_enabled"`
+	Config               types.String `tfsdk:"config"`
+	Capabilities         types.String `tfsdk:"capabilities"`
+	Tags                 types.String `tfsdk:"tags"`
+	Scopes               types.String `tfsdk:"scopes"`
+	DateCreated          types.String `tfsdk:"date_created"`
+	DateModified         types.String `tfsdk:"date_modified"`
 }
 
 type connectorAPIModel struct {
-	ID            string      `json:"id"`
-	Name          string      `json:"name"`
-	ConnectorType string      `json:"connector_type"`
-	IsActive      bool        `json:"is_active"`
-	Config        interface{} `json:"config"`
-	Capabilities  interface{} `json:"capabilities"`
-	Tags          interface{} `json:"tags"`
-	Scopes        interface{} `json:"scopes"`
-	DateCreated   string      `json:"date_created"`
-	DateModified  string      `json:"date_modified"`
+	ID                  string      `json:"id"`
+	Name                string      `json:"name"`
+	ConnectorType       string      `json:"connector_type"`
+	IsActive            bool        `json:"is_active"`
+	SecurityScanEnabled bool        `json:"security_scan_enabled"`
+	Config              interface{} `json:"config"`
+	Capabilities        interface{} `json:"capabilities"`
+	Tags                interface{} `json:"tags"`
+	Scopes              interface{} `json:"scopes"`
+	DateCreated         string      `json:"date_created"`
+	DateModified        string      `json:"date_modified"`
 }
 
 func connectorAPIToState(api connectorAPIModel) connectorResourceModel {
@@ -60,16 +62,17 @@ func connectorAPIToState(api connectorAPIModel) connectorResourceModel {
 	tagsJSON, _ := json.Marshal(api.Tags)
 	scopesJSON, _ := json.Marshal(api.Scopes)
 	return connectorResourceModel{
-		ID:            types.StringValue(api.ID),
-		Name:          types.StringValue(api.Name),
-		ConnectorType: types.StringValue(api.ConnectorType),
-		IsActive:      types.BoolValue(api.IsActive),
-		Config:        types.StringValue(string(configJSON)),
-		Capabilities:  types.StringValue(string(capsJSON)),
-		Tags:          types.StringValue(string(tagsJSON)),
-		Scopes:        types.StringValue(string(scopesJSON)),
-		DateCreated:   types.StringValue(api.DateCreated),
-		DateModified:  types.StringValue(api.DateModified),
+		ID:                  types.StringValue(api.ID),
+		Name:                types.StringValue(api.Name),
+		ConnectorType:       types.StringValue(api.ConnectorType),
+		IsActive:            types.BoolValue(api.IsActive),
+		SecurityScanEnabled: types.BoolValue(api.SecurityScanEnabled),
+		Config:              types.StringValue(string(configJSON)),
+		Capabilities:        types.StringValue(string(capsJSON)),
+		Tags:                types.StringValue(string(tagsJSON)),
+		Scopes:              types.StringValue(string(scopesJSON)),
+		DateCreated:         types.StringValue(api.DateCreated),
+		DateModified:        types.StringValue(api.DateModified),
 	}
 }
 
@@ -99,6 +102,12 @@ func (r *connectorResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Optional: true,
 				Computed: true,
 				Default:  booldefault.StaticBool(true),
+			},
+			"security_scan_enabled": schema.BoolAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     booldefault.StaticBool(true),
+				Description: "Include this connector in scheduled security scans (when org-level scans are enabled).",
 			},
 			"config": schema.StringAttribute{
 				Required:    true,
@@ -212,9 +221,10 @@ func (r *connectorResource) Delete(ctx context.Context, req resource.DeleteReque
 
 func connectorStateToPayload(plan connectorResourceModel) map[string]interface{} {
 	payload := map[string]interface{}{
-		"name":           plan.Name.ValueString(),
-		"connector_type": plan.ConnectorType.ValueString(),
-		"is_active":      plan.IsActive.ValueBool(),
+		"name":                  plan.Name.ValueString(),
+		"connector_type":        plan.ConnectorType.ValueString(),
+		"is_active":             plan.IsActive.ValueBool(),
+		"security_scan_enabled": plan.SecurityScanEnabled.ValueBool(),
 	}
 
 	var config interface{}

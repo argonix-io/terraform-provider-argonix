@@ -52,6 +52,7 @@ resource "argonix_connector" "gcp_scoped" {
 ### Optional
 
 - `is_active` (Boolean) — Whether the connector is active. Defaults to `true`.
+- `security_scan_enabled` (Boolean) — Include this connector in scheduled security scans (when org-level scans are enabled). Defaults to `true`.
 - `config` (String, Sensitive) — JSON-encoded configuration. Defaults to `"{}"`.
 - `capabilities` (String) — JSON-encoded capabilities list. Defaults to `"[]"`.
 - `tags` (String) — JSON-encoded tags. Defaults to `"[]"`.

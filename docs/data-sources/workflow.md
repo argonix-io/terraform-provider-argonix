@@ -29,6 +29,7 @@ data "argonix_workflow" "example" {
 - `description` (String)
 - `category` (String)
 - `steps` (String) — JSON-encoded workflow steps.
+- `input_hints` (String) — JSON-encoded map annotating each `{{input.x}}` referenced in `steps` with an optional `description` and `example`.
 - `required_connector_types` (String) — JSON-encoded list.
 - `requires_confirmation` (Boolean)
 - `schedule` (String)

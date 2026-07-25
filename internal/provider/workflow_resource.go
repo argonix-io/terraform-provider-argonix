@@ -35,6 +35,7 @@ type workflowResourceModel struct {
 	Description            types.String `tfsdk:"description"`
 	Category               types.String `tfsdk:"category"`
 	Steps                  types.String `tfsdk:"steps"`
+	InputHints             types.String `tfsdk:"input_hints"`
 	RequiredConnectorTypes types.String `tfsdk:"required_connector_types"`
 	RequiresConfirmation   types.Bool   `tfsdk:"requires_confirmation"`
 	Schedule               types.String `tfsdk:"schedule"`
@@ -50,6 +51,7 @@ type workflowAPIModel struct {
 	Description            *string     `json:"description"`
 	Category               string      `json:"category"`
 	Steps                  interface{} `json:"steps"`
+	InputHints             interface{} `json:"input_hints"`
 	RequiredConnectorTypes interface{} `json:"required_connector_types"`
 	RequiresConfirmation   bool        `json:"requires_confirmation"`
 	Schedule               *string     `json:"schedule"`
@@ -61,12 +63,18 @@ type workflowAPIModel struct {
 func workflowAPIToState(api workflowAPIModel) workflowResourceModel {
 	stepsJSON, _ := json.Marshal(api.Steps)
 	rctJSON, _ := json.Marshal(api.RequiredConnectorTypes)
+	hints := api.InputHints
+	if hints == nil {
+		hints = map[string]interface{}{}
+	}
+	hintsJSON, _ := json.Marshal(hints)
 	state := workflowResourceModel{
 		ID:                     types.StringValue(api.ID),
 		Name:                   types.StringValue(api.Name),
 		Slug:                   types.StringValue(api.Slug),
 		Category:               types.StringValue(api.Category),
 		Steps:                  types.StringValue(string(stepsJSON)),
+		InputHints:             types.StringValue(string(hintsJSON)),
 		RequiredConnectorTypes: types.StringValue(string(rctJSON)),
 		RequiresConfirmation:   types.BoolValue(api.RequiresConfirmation),
 		IsActive:               types.BoolValue(api.IsActive),
@@ -121,6 +129,12 @@ func (r *workflowResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 			"steps": schema.StringAttribute{
 				Required:    true,
 				Description: "JSON-encoded workflow step definitions.",
+			},
+			"input_hints": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("{}"),
+				Description: "JSON-encoded map annotating each {{input.x}} referenced in steps with an optional description and example (does not define the input set — that is derived from steps).",
 			},
 			"required_connector_types": schema.StringAttribute{
 				Optional:    true,
@@ -253,6 +267,13 @@ func workflowStateToPayload(plan workflowResourceModel) map[string]interface{} {
 	var steps interface{}
 	if err := json.Unmarshal([]byte(plan.Steps.ValueString()), &steps); err == nil {
 		payload["steps"] = steps
+	}
+
+	if !plan.InputHints.IsNull() && !plan.InputHints.IsUnknown() {
+		var hints interface{}
+		if err := json.Unmarshal([]byte(plan.InputHints.ValueString()), &hints); err == nil {
+			payload["input_hints"] = hints
+		}
 	}
 
 	if !plan.RequiredConnectorTypes.IsNull() && !plan.RequiredConnectorTypes.IsUnknown() {

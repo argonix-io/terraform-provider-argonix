@@ -24,6 +24,22 @@ resource "argonix_workflow" "restart_pod" {
   requires_confirmation    = true
 }
 
+resource "argonix_workflow" "restart_pod_documented" {
+  name     = "Restart Failing Pod"
+  slug     = "restart-failing-pod-doc"
+  category = "devops"
+  steps    = jsonencode([
+    { id = "restart", tool = "k8s.delete_pod", params = { namespace = "{{input.namespace}}", name = "{{input.pod_name}}" } }
+  ])
+  # input_hints only annotates the {{input.x}} referenced in steps (the input
+  # SET is always derived from steps — hints never define it).
+  input_hints = jsonencode({
+    namespace = { description = "Kubernetes namespace of the pod", example = "prod" }
+    pod_name  = { description = "Name of the pod to restart", example = "api-gateway-7d9f" }
+  })
+  required_connector_types = jsonencode(["kubernetes"])
+}
+
 resource "argonix_workflow" "daily_report" {
   name     = "Daily Status Report"
   slug     = "daily-status-report"
@@ -44,6 +60,7 @@ resource "argonix_workflow" "daily_report" {
 - `description` (String) — Description of the workflow. Defaults to `""`.
 - `category` (String) — Category. One of: `identity`, `incident`, `onboarding`, `devops`, `security`, `general`. Defaults to `"general"`.
 - `steps` (String) — JSON-encoded workflow steps. Defaults to `"[]"`.
+- `input_hints` (String) — JSON-encoded map annotating each `{{input.x}}` referenced in `steps` with an optional `description` and `example`. It does **not** define which inputs exist (that set is always derived from the `{{input.x}}` references in `steps`); orphan hints are ignored. Defaults to `"{}"`.
 - `required_connector_types` (String) — JSON-encoded list of required connector types. Defaults to `"[]"`.
 - `requires_confirmation` (Boolean) — Whether human confirmation is required. Defaults to `true`.
 - `schedule` (String) — Cron expression for scheduled execution. Defaults to `""`.

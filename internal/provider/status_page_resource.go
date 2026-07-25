@@ -28,67 +28,67 @@ type statusPageResource struct {
 }
 
 type statusPageResourceModel struct {
-	ID              types.String `tfsdk:"id"`
-	Name            types.String `tfsdk:"name"`
-	Slug            types.String `tfsdk:"slug"`
-	CustomDomain    types.String `tfsdk:"custom_domain"`
-	Visibility      types.String `tfsdk:"visibility"`
-	LogoURL         types.String `tfsdk:"logo_url"`
-	FaviconURL      types.String `tfsdk:"favicon_url"`
-	AccentColor     types.String `tfsdk:"accent_color"`
-	CustomCSS       types.String `tfsdk:"custom_css"`
-	HeaderText      types.String `tfsdk:"header_text"`
-	FooterText      types.String `tfsdk:"footer_text"`
-	MetaTitle       types.String `tfsdk:"meta_title"`
-	MetaDescription types.String `tfsdk:"meta_description"`
-	ShowHealthGraph types.Bool   `tfsdk:"show_health_graph"`
-	AutoPublishIncidents types.Bool `tfsdk:"auto_publish_incidents"`
-	IsActive        types.Bool   `tfsdk:"is_active"`
-	DateCreated     types.String `tfsdk:"date_created"`
-	DateModified    types.String `tfsdk:"date_modified"`
+	ID                   types.String `tfsdk:"id"`
+	Name                 types.String `tfsdk:"name"`
+	Slug                 types.String `tfsdk:"slug"`
+	CustomDomain         types.String `tfsdk:"custom_domain"`
+	Visibility           types.String `tfsdk:"visibility"`
+	LogoURL              types.String `tfsdk:"logo_url"`
+	FaviconURL           types.String `tfsdk:"favicon_url"`
+	AccentColor          types.String `tfsdk:"accent_color"`
+	CustomCSS            types.String `tfsdk:"custom_css"`
+	HeaderText           types.String `tfsdk:"header_text"`
+	FooterText           types.String `tfsdk:"footer_text"`
+	MetaTitle            types.String `tfsdk:"meta_title"`
+	MetaDescription      types.String `tfsdk:"meta_description"`
+	ShowHealthGraph      types.Bool   `tfsdk:"show_health_graph"`
+	AutoPublishIncidents types.Bool   `tfsdk:"auto_publish_incidents"`
+	IsActive             types.Bool   `tfsdk:"is_active"`
+	DateCreated          types.String `tfsdk:"date_created"`
+	DateModified         types.String `tfsdk:"date_modified"`
 }
 
 type statusPageAPIModel struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	Slug            string `json:"slug"`
-	CustomDomain    string `json:"custom_domain"`
-	Visibility      string `json:"visibility"`
-	LogoURL         string `json:"logo_url"`
-	FaviconURL      string `json:"favicon_url"`
-	AccentColor     string `json:"accent_color"`
-	CustomCSS       string `json:"custom_css"`
-	HeaderText      string `json:"header_text"`
-	FooterText      string `json:"footer_text"`
-	MetaTitle       string `json:"meta_title"`
-	MetaDescription string `json:"meta_description"`
-	ShowHealthGraph bool   `json:"show_health_graph"`
-	AutoPublishIncidents bool `json:"auto_publish_incidents"`
-	IsActive        bool   `json:"is_active"`
-	DateCreated     string `json:"date_created"`
-	DateModified    string `json:"date_modified"`
+	ID                   string `json:"id"`
+	Name                 string `json:"name"`
+	Slug                 string `json:"slug"`
+	CustomDomain         string `json:"custom_domain"`
+	Visibility           string `json:"visibility"`
+	LogoURL              string `json:"logo_url"`
+	FaviconURL           string `json:"favicon_url"`
+	AccentColor          string `json:"accent_color"`
+	CustomCSS            string `json:"custom_css"`
+	HeaderText           string `json:"header_text"`
+	FooterText           string `json:"footer_text"`
+	MetaTitle            string `json:"meta_title"`
+	MetaDescription      string `json:"meta_description"`
+	ShowHealthGraph      bool   `json:"show_health_graph"`
+	AutoPublishIncidents bool   `json:"auto_publish_incidents"`
+	IsActive             bool   `json:"is_active"`
+	DateCreated          string `json:"date_created"`
+	DateModified         string `json:"date_modified"`
 }
 
 func statusPageAPIToState(api statusPageAPIModel) statusPageResourceModel {
 	return statusPageResourceModel{
-		ID:              types.StringValue(api.ID),
-		Name:            types.StringValue(api.Name),
-		Slug:            types.StringValue(api.Slug),
-		CustomDomain:    types.StringValue(api.CustomDomain),
-		Visibility:      types.StringValue(api.Visibility),
-		LogoURL:         types.StringValue(api.LogoURL),
-		FaviconURL:      types.StringValue(api.FaviconURL),
-		AccentColor:     types.StringValue(api.AccentColor),
-		CustomCSS:       types.StringValue(api.CustomCSS),
-		HeaderText:      types.StringValue(api.HeaderText),
-		FooterText:      types.StringValue(api.FooterText),
-		MetaTitle:       types.StringValue(api.MetaTitle),
-		MetaDescription: types.StringValue(api.MetaDescription),
-		ShowHealthGraph: types.BoolValue(api.ShowHealthGraph),
+		ID:                   types.StringValue(api.ID),
+		Name:                 types.StringValue(api.Name),
+		Slug:                 types.StringValue(api.Slug),
+		CustomDomain:         types.StringValue(api.CustomDomain),
+		Visibility:           types.StringValue(api.Visibility),
+		LogoURL:              types.StringValue(api.LogoURL),
+		FaviconURL:           types.StringValue(api.FaviconURL),
+		AccentColor:          types.StringValue(api.AccentColor),
+		CustomCSS:            types.StringValue(api.CustomCSS),
+		HeaderText:           types.StringValue(api.HeaderText),
+		FooterText:           types.StringValue(api.FooterText),
+		MetaTitle:            types.StringValue(api.MetaTitle),
+		MetaDescription:      types.StringValue(api.MetaDescription),
+		ShowHealthGraph:      types.BoolValue(api.ShowHealthGraph),
 		AutoPublishIncidents: types.BoolValue(api.AutoPublishIncidents),
-		IsActive:        types.BoolValue(api.IsActive),
-		DateCreated:     types.StringValue(api.DateCreated),
-		DateModified:    types.StringValue(api.DateModified),
+		IsActive:             types.BoolValue(api.IsActive),
+		DateCreated:          types.StringValue(api.DateCreated),
+		DateModified:         types.StringValue(api.DateModified),
 	}
 }
 
@@ -269,20 +269,20 @@ func (r *statusPageResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 func statusPageStateToPayload(plan statusPageResourceModel) map[string]interface{} {
 	return map[string]interface{}{
-		"name":              plan.Name.ValueString(),
-		"slug":              plan.Slug.ValueString(),
-		"custom_domain":     plan.CustomDomain.ValueString(),
-		"visibility":        plan.Visibility.ValueString(),
-		"logo_url":          plan.LogoURL.ValueString(),
-		"favicon_url":       plan.FaviconURL.ValueString(),
-		"accent_color":      plan.AccentColor.ValueString(),
-		"custom_css":        plan.CustomCSS.ValueString(),
-		"header_text":       plan.HeaderText.ValueString(),
-		"footer_text":       plan.FooterText.ValueString(),
-		"meta_title":        plan.MetaTitle.ValueString(),
-		"meta_description":  plan.MetaDescription.ValueString(),
-		"show_health_graph": plan.ShowHealthGraph.ValueBool(),
+		"name":                   plan.Name.ValueString(),
+		"slug":                   plan.Slug.ValueString(),
+		"custom_domain":          plan.CustomDomain.ValueString(),
+		"visibility":             plan.Visibility.ValueString(),
+		"logo_url":               plan.LogoURL.ValueString(),
+		"favicon_url":            plan.FaviconURL.ValueString(),
+		"accent_color":           plan.AccentColor.ValueString(),
+		"custom_css":             plan.CustomCSS.ValueString(),
+		"header_text":            plan.HeaderText.ValueString(),
+		"footer_text":            plan.FooterText.ValueString(),
+		"meta_title":             plan.MetaTitle.ValueString(),
+		"meta_description":       plan.MetaDescription.ValueString(),
+		"show_health_graph":      plan.ShowHealthGraph.ValueBool(),
 		"auto_publish_incidents": plan.AutoPublishIncidents.ValueBool(),
-		"is_active":         plan.IsActive.ValueBool(),
+		"is_active":              plan.IsActive.ValueBool(),
 	}
 }

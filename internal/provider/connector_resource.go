@@ -29,17 +29,17 @@ type connectorResource struct {
 }
 
 type connectorResourceModel struct {
-	ID                   types.String `tfsdk:"id"`
-	Name                 types.String `tfsdk:"name"`
-	ConnectorType        types.String `tfsdk:"connector_type"`
-	IsActive             types.Bool   `tfsdk:"is_active"`
-	SecurityScanEnabled  types.Bool   `tfsdk:"security_scan_enabled"`
-	Config               types.String `tfsdk:"config"`
-	Capabilities         types.String `tfsdk:"capabilities"`
-	Tags                 types.String `tfsdk:"tags"`
-	Scopes               types.String `tfsdk:"scopes"`
-	DateCreated          types.String `tfsdk:"date_created"`
-	DateModified         types.String `tfsdk:"date_modified"`
+	ID                  types.String `tfsdk:"id"`
+	Name                types.String `tfsdk:"name"`
+	ConnectorType       types.String `tfsdk:"connector_type"`
+	IsActive            types.Bool   `tfsdk:"is_active"`
+	SecurityScanEnabled types.Bool   `tfsdk:"security_scan_enabled"`
+	Config              types.String `tfsdk:"config"`
+	Capabilities        types.String `tfsdk:"capabilities"`
+	Tags                types.String `tfsdk:"tags"`
+	Scopes              types.String `tfsdk:"scopes"`
+	DateCreated         types.String `tfsdk:"date_created"`
+	DateModified        types.String `tfsdk:"date_modified"`
 }
 
 type connectorAPIModel struct {

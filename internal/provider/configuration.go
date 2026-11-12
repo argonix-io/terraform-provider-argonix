@@ -430,7 +430,23 @@ func (c configuration) stateValue(body apiObject, prior map[string]attr.Value) (
 
 func (f configField) decode(raw json.RawMessage, prior attr.Value) (attr.Value, error) {
 	if len(raw) == 0 || string(raw) == "null" {
-		return f.attrType().ValueFromTerraform(context.Background(), tftypes.NewValue(f.attrType().TerraformType(context.Background()), nil))
+		// Some API versions represent default-valued configuration as null
+		// or omit it. Apply the same defaults used by the Terraform plan.
+		switch fallback := f.defaultValue.(type) {
+		case string:
+			if f.kind != jsonObjectField && f.kind != jsonArrayField {
+				return types.StringValue(fallback), nil
+			}
+			raw = json.RawMessage(fallback)
+		case bool:
+			return types.BoolValue(fallback), nil
+		case int:
+			return types.Int64Value(int64(fallback)), nil
+		default:
+			ctx := context.Background()
+			fieldType := f.attrType()
+			return fieldType.ValueFromTerraform(ctx, tftypes.NewValue(fieldType.TerraformType(ctx), nil))
+		}
 	}
 	switch f.kind {
 	case boolField:

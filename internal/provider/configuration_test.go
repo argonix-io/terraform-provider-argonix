@@ -147,3 +147,54 @@ func TestLogSourceNormalizesSnapshotDefaultsWithoutMaskingDrift(t *testing.T) {
 		t.Fatal("a change to the log target was hidden by normalization")
 	}
 }
+
+func TestLegacyAPINullsUseTerraformDefaults(t *testing.T) {
+	for _, tc := range []struct {
+		spec configuration
+		body string
+		want map[string]attr.Value
+	}{
+		{
+			spec: workflowConfiguration,
+			body: `{"id":"workflow","description":null,"schedule":null,"required_connector_types":null,"is_active":null,"schedule_next_run_at":null}`,
+			want: map[string]attr.Value{
+				"description":              types.StringValue(""),
+				"schedule":                 types.StringValue(""),
+				"input_hints":              types.StringValue("{}"),
+				"required_connector_types": types.StringValue("[]"),
+				"requires_confirmation":    types.BoolValue(false),
+				"is_active":                types.BoolValue(true),
+				"schedule_next_run_at":     types.StringNull(),
+			},
+		},
+		{
+			spec: syntheticTestConfiguration,
+			body: `{"id":"check","check_interval":null,"tags":null,"last_duration_ms":null}`,
+			want: map[string]attr.Value{
+				"check_interval":   types.Int64Value(300),
+				"tags":             types.StringValue("[]"),
+				"locations":        types.StringValue("[]"),
+				"last_duration_ms": types.Float64Null(),
+			},
+		},
+	} {
+		t.Run(tc.spec.name, func(t *testing.T) {
+			var response apiObject
+			if err := json.Unmarshal([]byte(tc.body), &response); err != nil {
+				t.Fatal(err)
+			}
+			prior := map[string]attr.Value{
+				"schedule": types.StringValue("0 9 * * *"),
+			}
+			state, err := tc.spec.stateValue(response, prior)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for key, want := range tc.want {
+				if got := state.Attributes()[key]; !got.Equal(want) {
+					t.Errorf("%s = %v, want %v", key, got, want)
+				}
+			}
+		})
+	}
+}

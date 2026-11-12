@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -178,26 +179,76 @@ func (c *Client) Delete(ctx context.Context, endpoint string) error {
 	if err != nil {
 		return err
 	}
+	if status == http.StatusNotFound {
+		return nil
+	}
 	if status < 200 || status >= 300 {
 		return fmt.Errorf("API returned status %d: %s", status, string(body))
 	}
 	return nil
 }
 
-// List sends a GET to the given endpoint and decodes a paginated response.
+// List follows Argonix pagination and also accepts legacy unpaginated arrays.
 func (c *Client) List(ctx context.Context, endpoint string, result interface{}) error {
-	url := fmt.Sprintf("%s%s", c.orgURL(), endpoint)
-	body, status, err := c.doRequest(ctx, http.MethodGet, url, nil)
+	first, err := url.Parse(c.orgURL() + endpoint)
 	if err != nil {
 		return err
 	}
-	if status < 200 || status >= 300 {
-		return fmt.Errorf("API returned status %d: %s", status, string(body))
+	pageURL := first
+	seen := make(map[string]bool)
+	items := make([]json.RawMessage, 0)
+	for pageURL != nil {
+		page := pageURL.String()
+		if seen[page] {
+			return fmt.Errorf("API repeated a pagination link")
+		}
+		seen[page] = true
+		body, status, err := c.doRequest(ctx, http.MethodGet, page, nil)
+		if err != nil {
+			return err
+		}
+		if status < 200 || status >= 300 {
+			return fmt.Errorf("API returned status %d: %s", status, string(body))
+		}
+		if result == nil {
+			return nil
+		}
+		if bytes.HasPrefix(bytes.TrimSpace(body), []byte("[")) {
+			var array []json.RawMessage
+			if err := json.Unmarshal(body, &array); err != nil {
+				return err
+			}
+			items = append(items, array...)
+			break
+		}
+		var paginated struct {
+			Results []json.RawMessage `json:"results"`
+			Next    string            `json:"next"`
+		}
+		if err := json.Unmarshal(body, &paginated); err != nil {
+			return err
+		}
+		if paginated.Results == nil {
+			return fmt.Errorf("API list response lacks a results array")
+		}
+		items = append(items, paginated.Results...)
+		if paginated.Next == "" {
+			break
+		}
+		next, err := pageURL.Parse(paginated.Next)
+		if err != nil {
+			return fmt.Errorf("invalid API pagination link: %w", err)
+		}
+		if next.Scheme != first.Scheme || next.Host != first.Host || next.Path != first.Path || next.User != nil {
+			return fmt.Errorf("API pagination link points outside the original collection")
+		}
+		pageURL = next
 	}
-	if result != nil {
-		return json.Unmarshal(body, result)
+	encoded, err := json.Marshal(items)
+	if err != nil {
+		return err
 	}
-	return nil
+	return json.Unmarshal(encoded, result)
 }
 
 // NotFoundError is returned when a resource is not found (404).

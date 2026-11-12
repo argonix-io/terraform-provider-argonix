@@ -55,7 +55,7 @@ func (p *argonixProvider) Schema(_ context.Context, _ provider.SchemaRequest, re
 			},
 			"api_key": schema.StringAttribute{
 				Description: "API key for authenticating with Argonix. The organization is automatically determined from the key. Can also be set via the ARGONIX_API_KEY environment variable.",
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
 			},
 		},
@@ -118,11 +118,9 @@ func (p *argonixProvider) Configure(ctx context.Context, req provider.ConfigureR
 
 // DataSources defines the data sources implemented in the provider.
 func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
+	return append([]func() datasource.DataSource{
 		NewMonitorDataSource,
 		NewMonitorsDataSource,
-		NewSyntheticTestDataSource,
-		NewSyntheticTestsDataSource,
 		NewGroupDataSource,
 		NewGroupsDataSource,
 		NewNotificationRuleDataSource,
@@ -140,8 +138,6 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewPersonasDataSource,
 		NewKnowledgeBaseDataSource,
 		NewKnowledgeBasesDataSource,
-		NewWorkflowDataSource,
-		NewWorkflowsDataSource,
 		NewChatChannelDataSource,
 		NewChatChannelsDataSource,
 		NewMaintenanceWindowDataSource,
@@ -156,14 +152,13 @@ func (p *argonixProvider) DataSources(_ context.Context) []func() datasource.Dat
 		NewSecurityScansDataSource,
 		NewDetectionRuleDataSource,
 		NewDetectionRulesDataSource,
-	}
+	}, configurationDataSources()...)
 }
 
 // Resources defines the resources implemented in the provider.
 func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
+	return append([]func() resource.Resource{
 		NewMonitorResource,
-		NewSyntheticTestResource,
 		NewGroupResource,
 		NewNotificationRuleResource,
 		NewAlertChannelResource,
@@ -175,7 +170,6 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewArgosSettingsResource,
 		NewPersonaResource,
 		NewKnowledgeBaseResource,
-		NewWorkflowResource,
 		NewChatChannelResource,
 		NewMaintenanceWindowResource,
 		NewEnvironmentResource,
@@ -183,5 +177,5 @@ func (p *argonixProvider) Resources(_ context.Context) []func() resource.Resourc
 		NewSecurityPolicyResource,
 		NewSecurityScanResource,
 		NewDetectionRuleResource,
-	}
+	}, configurationResources()...)
 }

@@ -1,34 +1,23 @@
 ---
 page_title: "argonix_workflows Data Source - Argonix"
 description: |-
-  Fetches all workflows in the organization.
+  Lists the Argonix workflows visible to the provider's API key.
 ---
 
 # argonix_workflows (Data Source)
 
-Fetches all workflows in the organization.
+Lists the Argonix workflows visible to the provider's API key.
 
-## Example Usage
+## Example usage
 
 ```terraform
 data "argonix_workflows" "all" {}
+
+output "workflow_ids" {
+  value = [for item in data.argonix_workflows.all.workflows : item.id]
+}
 ```
 
 ## Schema
 
-### Read-Only
-
-- `workflows` (List of Object) — List of all workflows. Each has:
-  - `id` (String)
-  - `name` (String)
-  - `slug` (String)
-  - `description` (String)
-  - `category` (String)
-  - `steps` (String) — JSON-encoded workflow steps.
-  - `input_hints` (String) — JSON-encoded map annotating each `{{input.x}}` referenced in `steps` with an optional `description` and `example`.
-  - `required_connector_types` (String) — JSON-encoded list.
-  - `requires_confirmation` (Boolean)
-  - `schedule` (String)
-  - `is_active` (Boolean)
-  - `date_created` (String)
-  - `date_modified` (String)
+- `workflows` (List of Object) — Objects with the attributes documented for the [single-object data source](workflow.md).

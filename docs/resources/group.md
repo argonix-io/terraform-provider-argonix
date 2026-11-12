@@ -6,7 +6,7 @@ description: |-
 
 # argonix_group (Resource)
 
-Manages an Argonix group. Groups allow you to organize monitors and other resources together.
+Manages an Argonix group. Use this resource for organization groups. To put monitors in folders, use [`argonix_monitor_group`](monitor_group.md).
 
 ## Example Usage
 

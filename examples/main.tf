@@ -3,7 +3,8 @@
 terraform {
   required_providers {
     argonix = {
-      source = "argonix-io/argonix"
+      source  = "argonix-io/argonix"
+      version = "~> 1.2.0"
     }
   }
 }
@@ -18,11 +19,10 @@ variable "argonix_api_key" {
   sensitive = true
 }
 
-# --- Group ---
-resource "argonix_group" "production" {
+# --- Monitor folder ---
+resource "argonix_monitor_group" "production" {
   name        = "Production"
   description = "Production monitors"
-  tags        = jsonencode({ env = "prod" })
 }
 
 # --- Monitor ---
@@ -33,16 +33,16 @@ resource "argonix_monitor" "api_health" {
   check_interval = 60
   timeout        = 10
   http_method    = "GET"
-  group_id       = argonix_group.production.id
+  group_id       = argonix_monitor_group.production.id
   tags           = jsonencode(["api", "health"])
   regions        = jsonencode(["eu-france"])
 }
 
 resource "argonix_monitor" "database_ping" {
-  name         = "Database Ping"
-  monitor_type = "tcp"
-  hostname     = "db.example.com"
-  port         = 5432
+  name           = "Database Ping"
+  monitor_type   = "tcp"
+  hostname       = "db.example.com"
+  port           = 5432
   check_interval = 120
 }
 
@@ -52,15 +52,15 @@ resource "argonix_synthetic_test" "login_flow" {
   test_type = "api"
   steps = jsonencode([
     {
-      name    = "Get CSRF Token"
-      method  = "GET"
-      url     = "https://api.example.com/auth/csrf"
+      name   = "Get CSRF Token"
+      method = "GET"
+      url    = "https://api.example.com/auth/csrf"
     },
     {
-      name    = "Login"
-      method  = "POST"
-      url     = "https://api.example.com/auth/login"
-      body    = "{\"email\": \"test@example.com\", \"password\": \"secret\"}"
+      name   = "Login"
+      method = "POST"
+      url    = "https://api.example.com/auth/login"
+      body   = "{\"email\": \"test@example.com\", \"password\": \"secret\"}"
     }
   ])
   check_interval = 300
@@ -105,8 +105,8 @@ resource "argonix_status_page" "public" {
 
 # --- Test Suite ---
 resource "argonix_test_suite" "smoke" {
-  name           = "Smoke Tests"
-  description    = "Quick verification suite"
+  name            = "Smoke Tests"
+  description     = "Quick verification suite"
   synthetic_tests = jsonencode([argonix_synthetic_test.login_flow.id])
 }
 
@@ -116,9 +116,9 @@ resource "argonix_manual_test_case" "checkout" {
   description = "End-to-end checkout test"
   priority    = "high"
   steps = jsonencode([
-    { description = "Add item to cart",   expected = "Item appears in cart" },
+    { description = "Add item to cart", expected = "Item appears in cart" },
     { description = "Proceed to checkout", expected = "Checkout page loads" },
-    { description = "Complete payment",    expected = "Order confirmation shown" }
+    { description = "Complete payment", expected = "Order confirmation shown" }
   ])
 }
 

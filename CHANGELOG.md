@@ -1,3 +1,13 @@
+## 1.2.0
+
+- Add resources and single/list lookups for periodic jobs, health notebooks, SRE patrols, code analysis projects, and repository and container image scanner targets.
+- Add monitor folders, monitor discovery sources, log analysis sources, FinOps tenants, cost budgets, and saved cost views as resources with single/list lookups.
+- Add single/list lookups for Code Analysis quality gates and code profiles.
+- Extend workflows with AI input extraction, schedules with timezones and input values, and defensive event filters.
+- Configure Sanity checks with default input variables, application links, run timeouts, and cron schedules using `argonix_synthetic_test`.
+- Add import support for workflows, synthetic tests, and the new resources. Follow API pagination and preserve equivalent JSON when refreshing state.
+- Allow environment-only API key configuration through `ARGONIX_API_KEY`.
+
 ## 1.1.6
 
 BREAKING CHANGES:
